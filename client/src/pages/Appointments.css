@@ -1,0 +1,175 @@
+.appointments-page {
+    padding: var(--space-xl) 0;
+    min-height: calc(100vh - 70px);
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-xl);
+}
+
+.page-header h1 {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Filter Tabs */
+.filter-tabs {
+    display: flex;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-xl);
+    padding: var(--space-xs);
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    width: fit-content;
+}
+
+.filter-tab {
+    padding: var(--space-sm) var(--space-lg);
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-weight: 500;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.filter-tab:hover {
+    color: var(--text-primary);
+}
+
+.filter-tab.active {
+    background: var(--gradient-primary);
+    color: white;
+}
+
+/* Appointments Container */
+.appointments-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.appointment-item {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 0.5fr 1fr;
+    align-items: center;
+    gap: var(--space-lg);
+    padding: var(--space-lg);
+    background: var(--gradient-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    transition: all var(--transition-base);
+}
+
+.appointment-item:hover {
+    border-color: var(--primary);
+}
+
+.apt-doctor {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.apt-avatar {
+    width: 50px;
+    height: 50px;
+    background: var(--gradient-primary);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: white;
+}
+
+.apt-doctor-info h4 {
+    font-size: 1rem;
+    margin-bottom: 2px;
+}
+
+.apt-doctor-info p {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.apt-datetime {
+    display: flex;
+    flex-direction: column;
+}
+
+.apt-date {
+    font-weight: 500;
+}
+
+.apt-time {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.apt-amount {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--success);
+}
+
+.apt-actions {
+    display: flex;
+    gap: var(--space-sm);
+    justify-content: flex-end;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: var(--space-2xl);
+    background: var(--gradient-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: var(--space-md);
+}
+
+.empty-state h3 {
+    margin-bottom: var(--space-sm);
+}
+
+.empty-state p {
+    color: var(--text-secondary);
+    margin-bottom: var(--space-lg);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .appointment-item {
+        grid-template-columns: 1fr;
+        gap: var(--space-md);
+    }
+
+    .apt-actions {
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        text-align: center;
+        gap: var(--space-md);
+    }
+
+    .filter-tabs {
+        flex-wrap: wrap;
+        width: 100%;
+        justify-content: center;
+    }
+}
