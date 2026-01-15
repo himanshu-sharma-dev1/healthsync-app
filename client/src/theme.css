@@ -1,0 +1,101 @@
+/* Light Theme Override */
+[data-theme="light"] {
+    --bg-primary: #f8fafc;
+    --bg-secondary: #ffffff;
+    --bg-tertiary: #e2e8f0;
+    --bg-card: rgba(255, 255, 255, 0.9);
+
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+
+    --border: rgba(0, 0, 0, 0.08);
+    --border-light: rgba(0, 0, 0, 0.12);
+
+    --gradient-dark: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+    --gradient-card: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95));
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Light theme specific adjustments */
+[data-theme="light"] .navbar {
+    background: rgba(255, 255, 255, 0.95);
+    border-bottom-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .card,
+[data-theme="light"] .doctor-card,
+[data-theme="light"] .form-step,
+[data-theme="light"] .booking-form,
+[data-theme="light"] .order-summary,
+[data-theme="light"] .payment-form-container {
+    background: linear-gradient(145deg, #ffffff, #f8fafc);
+    border-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .hero-card {
+    background: linear-gradient(145deg, #ffffff, #f1f5f9);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .btn-secondary {
+    background: #e2e8f0;
+    color: #0f172a;
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .btn-secondary:hover {
+    background: #cbd5e1;
+}
+
+[data-theme="light"] .form-input {
+    background: #ffffff;
+    border-color: rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="light"] .user-btn {
+    background: #e2e8f0;
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .user-dropdown {
+    background: #ffffff;
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .video-frame,
+[data-theme="light"] .video-controls,
+[data-theme="light"] .chat-sidebar {
+    background: #f1f5f9;
+}
+
+[data-theme="light"] .control-btn {
+    background: #ffffff;
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .symptom-chip,
+[data-theme="light"] .date-card,
+[data-theme="light"] .time-slot,
+[data-theme="light"] .specialty-card,
+[data-theme="light"] .method-option,
+[data-theme="light"] .urgency-option {
+    background: #ffffff;
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .brand-text {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+/* Transition for theme change */
+*,
+*::before,
+*::after {
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.15s ease;
+}

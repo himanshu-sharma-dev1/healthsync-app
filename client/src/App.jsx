@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import Navbar from './components/layout/Navbar';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -8,28 +9,49 @@ import Doctors from './pages/Doctors';
 import Dashboard from './pages/Dashboard';
 import Appointments from './pages/Appointments';
 import VideoCall from './pages/VideoCall';
+import PatientIntake from './pages/PatientIntake';
+import BookAppointment from './pages/BookAppointment';
+import Payment from './pages/Payment';
+import PaymentSuccess from './pages/PaymentSuccess';
+import WaitingRoom from './pages/WaitingRoom';
 import './index.css';
+import './theme.css';
+import './animations.css';
+import './components/ui.css';
+import './responsive.css';
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <div className="app">
-          <Navbar />
-          <main className="main-content">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/doctors" element={<Doctors />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/appointments" element={<Appointments />} />
-              <Route path="/video/:appointmentId" element={<VideoCall />} />
-            </Routes>
-          </main>
-        </div>
-      </Router>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <Router>
+          <div className="app">
+            <Navbar />
+            <main className="main-content">
+              <Routes>
+                {/* Public Routes */}
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/doctors" element={<Doctors />} />
+
+                {/* Patient Flow Routes */}
+                <Route path="/intake" element={<PatientIntake />} />
+                <Route path="/book/:doctorId" element={<BookAppointment />} />
+                <Route path="/payment/:appointmentId" element={<Payment />} />
+                <Route path="/payment-success" element={<PaymentSuccess />} />
+                <Route path="/waiting-room/:appointmentId" element={<WaitingRoom />} />
+
+                {/* Protected Routes */}
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/appointments" element={<Appointments />} />
+                <Route path="/video/:appointmentId" element={<VideoCall />} />
+              </Routes>
+            </main>
+          </div>
+        </Router>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

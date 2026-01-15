@@ -1,0 +1,159 @@
+/* Loading Button Styles */
+.loading-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    font-weight: 500;
+    border-radius: var(--radius-md);
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Variants */
+.loading-btn-primary {
+    background: var(--gradient-primary);
+    color: white;
+    box-shadow: var(--shadow-md);
+}
+
+.loading-btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-glow);
+}
+
+.loading-btn-secondary {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+}
+
+.loading-btn-secondary:hover:not(:disabled) {
+    background: var(--bg-secondary);
+    border-color: var(--primary);
+}
+
+.loading-btn-outline {
+    background: transparent;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+}
+
+.loading-btn-outline:hover:not(:disabled) {
+    background: var(--primary);
+    color: white;
+}
+
+.loading-btn-danger {
+    background: var(--error);
+    color: white;
+}
+
+.loading-btn-danger:hover:not(:disabled) {
+    background: #dc2626;
+}
+
+.loading-btn-success {
+    background: var(--success);
+    color: white;
+}
+
+.loading-btn-success:hover:not(:disabled) {
+    background: #059669;
+}
+
+/* Sizes */
+.loading-btn-small {
+    padding: var(--space-xs) var(--space-md);
+    font-size: 0.8125rem;
+}
+
+.loading-btn-medium {
+    padding: var(--space-sm) var(--space-lg);
+    font-size: 0.9375rem;
+}
+
+.loading-btn-large {
+    padding: var(--space-md) var(--space-xl);
+    font-size: 1rem;
+}
+
+/* Full Width */
+.loading-btn-full {
+    width: 100%;
+}
+
+/* Loading State */
+.loading-btn-loading {
+    pointer-events: none;
+}
+
+.loading-btn-spinner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading-btn-spinner svg {
+    width: 18px;
+    height: 18px;
+    animation: btnSpin 1s linear infinite;
+}
+
+.loading-btn-spinner circle {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-dasharray: 50;
+    stroke-dashoffset: 20;
+}
+
+@keyframes btnSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Disabled State */
+.loading-btn-disabled,
+.loading-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* Icon */
+.loading-btn-icon {
+    display: flex;
+    align-items: center;
+    font-size: 1.125em;
+}
+
+/* Ripple Effect */
+.loading-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease, height 0.6s ease;
+}
+
+.loading-btn:active::after {
+    width: 300px;
+    height: 300px;
+}
+
+/* Text */
+.loading-btn-text {
+    position: relative;
+    z-index: 1;
+}
