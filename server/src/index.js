@@ -11,6 +11,7 @@ import appointmentRoutes from './routes/appointments.js';
 import doctorRoutes from './routes/doctors.js';
 import paymentRoutes from './routes/payments.js';
 import videoRoutes from './routes/video.js';
+import transcriptionRoutes, { setupTranscriptionWebSocket } from './routes/transcription.js';
 
 dotenv.config();
 
@@ -41,10 +42,20 @@ app.use('/api/appointments', appointmentRoutes);
 app.use('/api/doctors', doctorRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/video', videoRoutes);
+app.use('/api/transcription', transcriptionRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'HealthSync API is running' });
+  res.json({
+    status: 'ok',
+    message: 'HealthSync API is running',
+    features: {
+      payments: 'Square',
+      transcription: 'DeepGram',
+      video: 'Daily.co',
+      database: 'MongoDB Atlas'
+    }
+  });
 });
 
 // Socket.io chat handling
@@ -60,15 +71,29 @@ io.on('connection', (socket) => {
     io.to(roomId).emit('new-message', { message, sender, timestamp: new Date() });
   });
 
+  // Typing indicators
+  socket.on('typing', ({ roomId, user }) => {
+    socket.to(roomId).emit('user-typing', { user });
+  });
+
+  socket.on('stop-typing', ({ roomId }) => {
+    socket.to(roomId).emit('user-stopped-typing');
+  });
+
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id);
   });
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 httpServer.listen(PORT, () => {
   console.log(`🏥 HealthSync server running on port ${PORT}`);
+  console.log(`💳 Square Payments: ${process.env.SQUARE_ENVIRONMENT || 'not configured'}`);
+  console.log(`🎙️ DeepGram: ${process.env.DEEPGRAM_API_KEY ? 'configured' : 'not configured'}`);
+
+  // Setup transcription WebSocket
+  setupTranscriptionWebSocket(httpServer);
 });
 
 export { io };
