@@ -1,0 +1,238 @@
+.intake-page {
+    padding: var(--space-xl) 0;
+    min-height: calc(100vh - 70px);
+}
+
+.intake-header {
+    text-align: center;
+    margin-bottom: var(--space-2xl);
+}
+
+.intake-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: var(--space-sm);
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Progress Steps */
+.progress-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: var(--space-xl);
+}
+
+.step {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    opacity: 0.5;
+    transition: opacity var(--transition-base);
+}
+
+.step.active {
+    opacity: 1;
+}
+
+.step-num {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--bg-tertiary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    transition: all var(--transition-base);
+}
+
+.step.active .step-num {
+    background: var(--gradient-primary);
+    color: white;
+}
+
+.step-label {
+    font-weight: 500;
+}
+
+.step-line {
+    width: 60px;
+    height: 2px;
+    background: var(--border);
+    margin: 0 var(--space-md);
+}
+
+/* Form */
+.intake-form {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.form-step {
+    background: var(--gradient-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: var(--space-xl);
+}
+
+.form-step h2 {
+    font-size: 1.5rem;
+    margin-bottom: var(--space-lg);
+}
+
+/* Symptom Grid */
+.symptom-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+}
+
+.symptom-chip {
+    padding: var(--space-sm) var(--space-md);
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.symptom-chip:hover {
+    border-color: var(--primary);
+    color: var(--text-primary);
+}
+
+.symptom-chip.selected {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
+/* Urgency Options */
+.urgency-options {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.urgency-option {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-md);
+    background: var(--bg-tertiary);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.urgency-option:hover,
+.urgency-option.selected {
+    border-color: var(--primary);
+}
+
+.urgency-option input {
+    display: none;
+}
+
+.urgency-label {
+    display: block;
+    font-weight: 600;
+}
+
+.urgency-desc {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+/* Specialty Grid */
+.specialty-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+    margin-bottom: var(--space-xl);
+}
+
+.specialty-card {
+    padding: var(--space-lg);
+    background: var(--bg-tertiary);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.specialty-card:hover {
+    border-color: var(--border-light);
+}
+
+.specialty-card.selected {
+    border-color: var(--primary);
+    background: rgba(14, 165, 233, 0.1);
+}
+
+.specialty-card input {
+    display: none;
+}
+
+.specialty-name {
+    display: block;
+    font-weight: 600;
+    font-size: 1.125rem;
+    margin-bottom: var(--space-xs);
+}
+
+.specialty-desc {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-md);
+    margin-top: var(--space-xl);
+}
+
+.form-actions .btn {
+    flex: 1;
+}
+
+/* Auth Required */
+.auth-required {
+    text-align: center;
+    padding: var(--space-2xl);
+    background: var(--gradient-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+}
+
+.auth-required h2 {
+    margin-bottom: var(--space-sm);
+}
+
+.auth-required p {
+    color: var(--text-secondary);
+    margin-bottom: var(--space-lg);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .specialty-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .progress-steps {
+        flex-wrap: wrap;
+        gap: var(--space-sm);
+    }
+
+    .step-line {
+        display: none;
+    }
+}

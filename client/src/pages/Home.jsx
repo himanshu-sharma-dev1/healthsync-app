@@ -1,6 +1,14 @@
 import { Link } from 'react-router-dom';
 import './Home.css';
 
+// Import generated images
+import heroIllustration from '../assets/images/hero_illustration_1768411058198.png';
+import doctorFemale from '../assets/images/doctor_avatar_female_1768411074828.png';
+import videoCallFeature from '../assets/images/video_call_feature_1768411109016.png';
+import chatFeature from '../assets/images/chat_feature_1768411194744.png';
+import paymentSecure from '../assets/images/payment_secure_1768411142589.png';
+import appointmentCalendar from '../assets/images/appointment_calendar_1768411210779.png';
+
 const Home = () => {
     return (
         <div className="home">
@@ -44,7 +52,11 @@ const Home = () => {
                     <div className="hero-visual">
                         <div className="hero-card">
                             <div className="card-header">
-                                <div className="doctor-avatar">👨‍⚕️</div>
+                                <img
+                                    src={doctorFemale}
+                                    alt="Dr. Sarah Johnson"
+                                    className="doctor-avatar-img"
+                                />
                                 <div className="doctor-info">
                                     <h4>Dr. Sarah Johnson</h4>
                                     <p>Cardiologist</p>
@@ -55,6 +67,11 @@ const Home = () => {
                                 <p>Ready for your consultation?</p>
                                 <button className="btn btn-primary">Start Video Call</button>
                             </div>
+                        </div>
+
+                        {/* Hero illustration */}
+                        <div className="hero-illustration">
+                            <img src={heroIllustration} alt="Telehealth Consultation" />
                         </div>
                     </div>
                 </div>
@@ -70,19 +87,25 @@ const Home = () => {
 
                     <div className="features-grid">
                         <div className="feature-card">
-                            <div className="feature-icon">📹</div>
+                            <div className="feature-icon-img">
+                                <img src={videoCallFeature} alt="Video Consultations" />
+                            </div>
                             <h3>Video Consultations</h3>
                             <p>HD video calls with doctors, just like an in-person visit. No commute needed.</p>
                         </div>
 
                         <div className="feature-card">
-                            <div className="feature-icon">💳</div>
+                            <div className="feature-icon-img">
+                                <img src={paymentSecure} alt="Secure Payments" />
+                            </div>
                             <h3>Secure Payments</h3>
                             <p>Pay safely before your consultation with our encrypted payment gateway.</p>
                         </div>
 
                         <div className="feature-card">
-                            <div className="feature-icon">💬</div>
+                            <div className="feature-icon-img">
+                                <img src={chatFeature} alt="Real-time Chat" />
+                            </div>
                             <h3>Real-time Chat</h3>
                             <p>Share documents, images, and chat with your doctor during sessions.</p>
                         </div>
@@ -100,9 +123,11 @@ const Home = () => {
                         </div>
 
                         <div className="feature-card">
-                            <div className="feature-icon">📱</div>
-                            <h3>Access Anywhere</h3>
-                            <p>Works on any device - phone, tablet, or computer. No app needed.</p>
+                            <div className="feature-icon-img">
+                                <img src={appointmentCalendar} alt="Access Anywhere" />
+                            </div>
+                            <h3>Easy Scheduling</h3>
+                            <p>Book appointments easily with our intuitive calendar system.</p>
                         </div>
                     </div>
                 </div>
