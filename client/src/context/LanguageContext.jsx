@@ -44,43 +44,6 @@ const translations = {
         waitingRoom: 'Waiting Room',
         doctorWillJoin: 'Your doctor will join shortly',
         prepareForCall: 'Prepare for your consultation',
-
-        // Common Actions
-        save: 'Save',
-        cancel: 'Cancel',
-        submit: 'Submit',
-        back: 'Back',
-        next: 'Next',
-        loading: 'Loading...',
-
-        // Stats
-        consultations: 'Consultations',
-        rating: 'Rating',
-
-        // Auth
-        signInToAccess: 'Sign in to access your healthcare dashboard',
-        createAccount: 'Create an account to get started',
-        email: 'Email',
-        password: 'Password',
-        signIn: 'Sign In',
-        signUp: 'Sign Up',
-        dontHaveAccount: "Don't have an account?",
-        alreadyHaveAccount: 'Already have an account?',
-        joinNetwork: 'Join Our Healthcare Network',
-        joinHealthSync: 'Join HealthSync for instant healthcare access',
-
-        // Patient Intake
-        patientIntake: 'Patient Intake',
-        tellUsSymptoms: 'Tell us about your symptoms',
-        symptoms: 'Symptoms',
-        urgencyLevel: 'Urgency Level',
-        proceedToDoctor: 'Proceed to Doctor Selection',
-
-        // Waiting Room
-        waitingRoom: 'Waiting Room',
-        doctorWillJoin: 'Your doctor will join shortly',
-        prepareForCall: 'Prepare for your consultation',
-        joinCall: 'Join Call',
         estimatedWait: 'Estimated Wait',
         queuePosition: 'Queue Position',
 
@@ -142,43 +105,6 @@ const translations = {
         waitingRoom: 'प्रतीक्षा कक्ष',
         doctorWillJoin: 'आपके डॉक्टर जल्द ही शामिल होंगे',
         prepareForCall: 'अपने परामर्श के लिए तैयार रहें',
-
-        // Common Actions
-        save: 'सेव करें',
-        cancel: 'रद्द करें',
-        submit: 'जमा करें',
-        back: 'वापस',
-        next: 'आगे',
-        loading: 'लोड हो रहा है...',
-
-        // Stats
-        consultations: 'परामर्श',
-        rating: 'रेटिंग',
-
-        // Auth
-        signInToAccess: 'अपने स्वास्थ्य डैशबोर्ड तक पहुंचने के लिए साइन इन करें',
-        createAccount: 'शुरू करने के लिए एक खाता बनाएं',
-        email: 'ईमेल',
-        password: 'पासवर्ड',
-        signIn: 'साइन इन करें',
-        signUp: 'साइन अप करें',
-        dontHaveAccount: 'क्या आपके पास खाता नहीं है?',
-        alreadyHaveAccount: 'क्या आपके पास पहले से खाता है?',
-        joinNetwork: 'हमारे हेल्थकेयर नेटवर्क से जुड़ें',
-        joinHealthSync: 'तुरंत स्वास्थ्य सेवा पाने के लिए जुड़ें',
-
-        // Patient Intake
-        patientIntake: 'रोगी प्रवेश',
-        tellUsSymptoms: 'अपने लक्षणों के बारे में बताएं',
-        symptoms: 'लक्षण',
-        urgencyLevel: 'तात्कालिकता स्तर',
-        proceedToDoctor: 'डॉक्टर चयन पर जाएं',
-
-        // Waiting Room
-        waitingRoom: 'प्रतीक्षा कक्ष',
-        doctorWillJoin: 'आपके डॉक्टर जल्द ही शामिल होंगे',
-        prepareForCall: 'अपने परामर्श के लिए तैयार रहें',
-        joinCall: 'कॉल में शामिल हों',
         estimatedWait: 'अनुमानित प्रतीक्षा',
         queuePosition: 'कतार में स्थान',
 

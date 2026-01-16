@@ -5,9 +5,17 @@ import DailyIframe from '@daily-co/daily-js';
 import { io } from 'socket.io-client';
 import './VideoCall.css';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
-const SOCKET_URL = API_URL.replace('/api', '');
-const WS_URL = API_URL.replace('http', 'ws').replace('/api', '');
+// Helper to extract base URL (removes /api suffix if present)
+const getBaseUrl = (apiUrl) => {
+    if (!apiUrl) return 'http://localhost:5000';
+    return apiUrl.replace(/\/api\/?$/, '');
+};
+
+const API_URL_ENV = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const BASE_URL = getBaseUrl(API_URL_ENV);
+const SOCKET_URL = BASE_URL;
+// Replace http/https with ws/wss
+const WS_URL = BASE_URL.replace(/^http/, 'ws');
 
 // Medical term categories for highlighting
 const MEDICAL_TERMS = {
