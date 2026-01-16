@@ -1,9 +1,15 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import './Auth.css';
 
+// Import images
+import healthsyncLogo from '../assets/images/healthsync_logo_1768411126010.png';
+import heroIllustration from '../assets/images/hero_illustration_1768411058198.png';
+
 const Login = () => {
+    const { t } = useLanguage();
     const [formData, setFormData] = useState({
         email: '',
         password: ''
@@ -35,15 +41,24 @@ const Login = () => {
     };
 
     return (
-        <div className="auth-page">
+        <div className="auth-page auth-page-split">
+            {/* Hero Visual Panel */}
+            <div className="auth-visual">
+                <img src={heroIllustration} alt="Telehealth Consultation" className="auth-hero-img" />
+                <div className="auth-visual-content">
+                    <h2>{t('heroTitle')}</h2>
+                    <p>{t('heroSubtitle')}</p>
+                </div>
+            </div>
+
             <div className="auth-container">
                 <div className="auth-card">
                     <div className="auth-header">
                         <Link to="/" className="auth-logo">
-                            <span>🏥</span> HealthSync
+                            <img src={healthsyncLogo} alt="HealthSync" className="auth-logo-img" />
                         </Link>
-                        <h1>Welcome Back</h1>
-                        <p>Sign in to access your healthcare dashboard</p>
+                        <h1>{t('welcomeBack')}</h1>
+                        <p>{t('signInToAccess')}</p>
                     </div>
 
                     {error && (

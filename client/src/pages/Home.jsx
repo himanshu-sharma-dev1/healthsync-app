@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext';
 import './Home.css';
 
 // Import generated images
@@ -8,8 +9,11 @@ import videoCallFeature from '../assets/images/video_call_feature_1768411109016.
 import chatFeature from '../assets/images/chat_feature_1768411194744.png';
 import paymentSecure from '../assets/images/payment_secure_1768411142589.png';
 import appointmentCalendar from '../assets/images/appointment_calendar_1768411210779.png';
+import healthsyncLogo from '../assets/images/healthsync_logo_1768411126010.png';
 
 const Home = () => {
+    const { t } = useLanguage();
+
     return (
         <div className="home">
             {/* Hero Section */}
@@ -17,34 +21,32 @@ const Home = () => {
                 <div className="container">
                     <div className="hero-content">
                         <h1 className="hero-title">
-                            Healthcare Access
-                            <span className="highlight"> From Anywhere</span>
+                            {t('heroTitle')}
                         </h1>
                         <p className="hero-subtitle">
-                            Connect with top doctors instantly through secure video consultations.
-                            Quality healthcare at your fingertips, anytime, anywhere.
+                            {t('heroSubtitle')}
                         </p>
                         <div className="hero-buttons">
                             <Link to="/doctors" className="btn btn-primary btn-lg">
-                                Find a Doctor
+                                {t('findDoctors')}
                             </Link>
                             <Link to="/register" className="btn btn-outline btn-lg">
-                                Get Started
+                                {t('getStarted')}
                             </Link>
                         </div>
 
                         <div className="hero-stats">
                             <div className="stat">
                                 <span className="stat-number">500+</span>
-                                <span className="stat-label">Doctors</span>
+                                <span className="stat-label">{t('doctors')}</span>
                             </div>
                             <div className="stat">
                                 <span className="stat-number">50K+</span>
-                                <span className="stat-label">Consultations</span>
+                                <span className="stat-label">{t('consultations')}</span>
                             </div>
                             <div className="stat">
                                 <span className="stat-number">4.9</span>
-                                <span className="stat-label">Rating</span>
+                                <span className="stat-label">{t('rating')}</span>
                             </div>
                         </div>
                     </div>
@@ -160,15 +162,74 @@ const Home = () => {
                 </div>
             </section>
 
+            {/* Testimonials Section */}
+            <section className="testimonials">
+                <div className="container">
+                    <h2 className="section-title text-center">What Our Patients Say</h2>
+                    <p className="section-subtitle text-center text-secondary">
+                        Thousands of patients trust HealthSync for their healthcare needs
+                    </p>
+
+                    <div className="testimonials-grid">
+                        <div className="testimonial-card">
+                            <div className="testimonial-rating">⭐⭐⭐⭐⭐</div>
+                            <p className="testimonial-text">
+                                "HealthSync made it so easy to consult with a cardiologist from home. The video quality was excellent!"
+                            </p>
+                            <div className="testimonial-author">
+                                <div className="author-avatar">RK</div>
+                                <div>
+                                    <strong>Rahul Kumar</strong>
+                                    <span>Patient</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="testimonial-card featured">
+                            <div className="testimonial-rating">⭐⭐⭐⭐⭐</div>
+                            <p className="testimonial-text">
+                                "As a doctor, I can now reach patients in remote areas. The platform is intuitive and the transcription feature is amazing."
+                            </p>
+                            <div className="testimonial-author">
+                                <img src={doctorFemale} alt="Dr. Priya" className="author-avatar-img" />
+                                <div>
+                                    <strong>Dr. Priya Sharma</strong>
+                                    <span>Cardiologist</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="testimonial-card">
+                            <div className="testimonial-rating">⭐⭐⭐⭐⭐</div>
+                            <p className="testimonial-text">
+                                "Quick booking, easy payments, and professional doctors. Best healthcare app I've used!"
+                            </p>
+                            <div className="testimonial-author">
+                                <div className="author-avatar">SP</div>
+                                <div>
+                                    <strong>Sneha Patel</strong>
+                                    <span>Patient</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             {/* CTA Section */}
             <section className="cta">
                 <div className="container">
                     <div className="cta-content">
-                        <h2>Ready to Get Started?</h2>
+                        <h2>🚀 Ready to Get Started?</h2>
                         <p>Join thousands of patients who trust HealthSync for their healthcare needs.</p>
-                        <Link to="/register" className="btn btn-primary btn-lg">
-                            Create Free Account
-                        </Link>
+                        <div className="cta-buttons">
+                            <Link to="/register" className="btn btn-primary btn-lg">
+                                Create Free Account
+                            </Link>
+                            <Link to="/doctors" className="btn btn-secondary btn-lg">
+                                Browse Doctors
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -178,7 +239,7 @@ const Home = () => {
                 <div className="container">
                     <div className="footer-content">
                         <div className="footer-brand">
-                            <span className="brand-icon">🏥</span>
+                            <img src={healthsyncLogo} alt="HealthSync" className="footer-logo" />
                             <span>HealthSync</span>
                         </div>
                         <p className="footer-text">
