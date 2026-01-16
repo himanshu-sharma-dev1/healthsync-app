@@ -13,6 +13,50 @@
 .welcome-text h1 {
     font-size: 2rem;
     margin-bottom: var(--space-xs);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.greeting-emoji {
+    font-size: 2.5rem;
+    display: inline-block;
+    animation: wave 2s ease-in-out infinite;
+}
+
+@keyframes wave {
+
+    0%,
+    100% {
+        transform: rotate(0deg);
+    }
+
+    25% {
+        transform: rotate(15deg);
+    }
+
+    75% {
+        transform: rotate(-10deg);
+    }
+}
+
+.btn-cta-pulse {
+    animation: ctaPulse 2.5s ease-in-out infinite;
+    box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
+}
+
+@keyframes ctaPulse {
+
+    0%,
+    100% {
+        box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
+        transform: scale(1);
+    }
+
+    50% {
+        box-shadow: 0 6px 25px rgba(14, 165, 233, 0.5);
+        transform: scale(1.02);
+    }
 }
 
 /* Stats Grid */
@@ -120,6 +164,22 @@
     font-size: 1.5rem;
 }
 
+.doctor-avatar-sm-img {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    object-fit: cover;
+    border: 2px solid var(--border);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.appointment-card:hover .doctor-avatar-sm-img {
+    border-color: var(--primary);
+    box-shadow: 0 5px 15px rgba(14, 165, 233, 0.3);
+    transform: scale(1.08);
+}
+
 .appointment-info h4 {
     font-size: 1rem;
     margin-bottom: 2px;
@@ -207,6 +267,229 @@
     }
 
     .appointment-info {
+        flex-direction: column;
+    }
+}
+
+/* Section Tabs */
+.section-tabs {
+    display: flex;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-lg);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: var(--space-md);
+}
+
+.tab-btn {
+    padding: var(--space-sm) var(--space-md);
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    cursor: pointer;
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+}
+
+.tab-btn:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.tab-btn.active {
+    background: var(--primary);
+    color: white;
+}
+
+/* Past Consultations */
+.appointment-card.past {
+    border-left: 3px solid var(--success);
+}
+
+.appointment-details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.appointment-details .diagnosis {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.appointment-actions .rating {
+    font-size: 0.8rem;
+}
+
+/* Prescriptions List */
+.prescriptions-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.prescription-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-md);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-lg);
+    border-left: 3px solid var(--border);
+}
+
+.prescription-item.active {
+    border-left-color: var(--success);
+}
+
+.prescription-item.completed {
+    border-left-color: var(--text-muted);
+    opacity: 0.7;
+}
+
+.rx-info {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.rx-info .rx-icon {
+    font-size: 1.5rem;
+}
+
+.rx-info h4 {
+    font-size: 1rem;
+    margin-bottom: 2px;
+}
+
+.rx-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 2px;
+}
+
+.rx-doctor {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.rx-date {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* Medical Profile */
+.profile-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+}
+
+.profile-item {
+    background: var(--bg-tertiary);
+    padding: var(--space-md);
+    border-radius: var(--radius-lg);
+    text-align: center;
+}
+
+.profile-item .label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: var(--space-xs);
+}
+
+.profile-item .value {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.profile-item .value.blood-type {
+    color: #ef4444;
+}
+
+.profile-tags {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.tag-group {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+}
+
+.tag-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.tag {
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.tag.allergy {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+}
+
+.tag.condition {
+    background: rgba(245, 158, 11, 0.2);
+    color: #f59e0b;
+}
+
+/* Badge styles */
+.badge {
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.badge-success {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+}
+
+.badge-info {
+    background: rgba(14, 165, 233, 0.2);
+    color: #0ea5e9;
+}
+
+.badge-secondary {
+    background: rgba(107, 114, 128, 0.2);
+    color: #6b7280;
+}
+
+/* Responsive for new sections */
+@media (max-width: 768px) {
+    .section-tabs {
+        flex-wrap: wrap;
+    }
+
+    .profile-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .prescription-item {
+        flex-direction: column;
+        gap: var(--space-md);
+        text-align: center;
+    }
+
+    .rx-info {
         flex-direction: column;
     }
 }

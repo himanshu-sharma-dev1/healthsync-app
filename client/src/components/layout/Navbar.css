@@ -190,6 +190,13 @@
     font-size: 1.25rem;
 }
 
+/* Navbar Actions (Language, Notifications, Theme) */
+.navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
 /* Mobile Menu Toggle */
 .mobile-menu-toggle {
     display: none;
