@@ -132,24 +132,19 @@ router.get('/:id/availability', async (req, res) => {
 
 // Helper to generate time slots
 function generateTimeSlots(availability, date) {
-    const slots = [];
+    if (!date || !availability) return [];
+
     const dayOfWeek = new Date(date).toLocaleDateString('en-US', { weekday: 'long' });
 
     const dayAvailability = availability?.find(a =>
         a.day.toLowerCase() === dayOfWeek.toLowerCase()
     );
 
-    if (dayAvailability) {
-        const start = parseInt(dayAvailability.startTime.split(':')[0]);
-        const end = parseInt(dayAvailability.endTime.split(':')[0]);
-
-        for (let hour = start; hour < end; hour++) {
-            slots.push(`${hour.toString().padStart(2, '0')}:00`);
-            slots.push(`${hour.toString().padStart(2, '0')}:30`);
-        }
+    if (dayAvailability && dayAvailability.slots) {
+        return dayAvailability.slots;
     }
 
-    return slots;
+    return [];
 }
 
 export default router;

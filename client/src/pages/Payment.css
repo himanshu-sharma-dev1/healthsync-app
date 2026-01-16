@@ -53,6 +53,21 @@
     color: white;
 }
 
+.doc-avatar-img {
+    width: 50px;
+    height: 50px;
+    border-radius: var(--radius-md);
+    object-fit: cover;
+    border: 2px solid var(--primary);
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);
+    transition: all 0.3s ease;
+}
+
+.doc-info:hover .doc-avatar-img {
+    transform: scale(1.08);
+    box-shadow: 0 6px 18px rgba(14, 165, 233, 0.35);
+}
+
 .doc-info h4 {
     font-size: 1rem;
     margin-bottom: 2px;
@@ -93,13 +108,48 @@
 .secure-badge {
     display: flex;
     align-items: center;
-    gap: var(--space-sm);
+    gap: var(--space-md);
     margin-top: var(--space-lg);
     padding: var(--space-md);
     background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: var(--radius-lg);
+}
+
+.secure-badge-img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
     border-radius: var(--radius-md);
-    font-size: 0.8125rem;
+    padding: 4px;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(14, 165, 233, 0.2));
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    animation: pulse-glow 3s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+    }
+
+    50% {
+        box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+    }
+}
+
+.secure-badge .secure-title {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
     color: var(--success);
+    margin-bottom: 2px;
+}
+
+.secure-badge .secure-text {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
 }
 
 /* Payment Form */

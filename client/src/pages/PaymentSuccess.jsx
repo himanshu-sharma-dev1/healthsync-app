@@ -65,10 +65,47 @@ const PaymentSuccess = () => {
                             <span className="mono">{appointmentId || 'N/A'}</span>
                         </div>
                         <div className="detail-row">
+                            <span>Amount Paid</span>
+                            <span className="amount">₹500.00</span>
+                        </div>
+                        <div className="detail-row">
+                            <span>Payment Method</span>
+                            <span>Card / UPI</span>
+                        </div>
+                        <div className="detail-row">
                             <span>Status</span>
                             <span className="status-badge success">Confirmed</span>
                         </div>
                     </div>
+
+                    {/* Download Receipt Button */}
+                    <button
+                        className="btn btn-secondary receipt-btn"
+                        onClick={() => {
+                            const receipt = `
+HEALTHSYNC PAYMENT RECEIPT
+==========================
+Date: ${new Date().toLocaleDateString()}
+Time: ${new Date().toLocaleTimeString()}
+
+Transaction ID: ${transactionId || `TXN${Date.now()}`}
+Appointment ID: ${appointmentId || 'N/A'}
+Amount Paid: ₹500.00
+Payment Status: CONFIRMED
+
+Thank you for choosing HealthSync!
+                            `.trim();
+                            const blob = new Blob([receipt], { type: 'text/plain' });
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = `receipt-${transactionId || Date.now()}.txt`;
+                            a.click();
+                            URL.revokeObjectURL(url);
+                        }}
+                    >
+                        📄 Download Receipt
+                    </button>
 
                     <div className="next-steps">
                         <h3>What's Next?</h3>

@@ -1,0 +1,229 @@
+.prescription-page {
+    padding: var(--space-xl) 0;
+    min-height: calc(100vh - 70px);
+}
+
+.prescription-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-xl);
+}
+
+.prescription-header h1 {
+    font-size: 2rem;
+    margin-bottom: var(--space-xs);
+}
+
+/* Patient Info Card */
+.patient-info-card {
+    background: var(--gradient-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: var(--space-lg);
+    margin-bottom: var(--space-xl);
+}
+
+.patient-info-card h3 {
+    margin-bottom: var(--space-md);
+}
+
+.patient-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.info-item .label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-item .value {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.info-item .symptoms {
+    display: flex;
+    gap: var(--space-xs);
+    flex-wrap: wrap;
+}
+
+.symptom-tag {
+    padding: 2px 8px;
+    background: rgba(14, 165, 233, 0.2);
+    color: var(--primary);
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+}
+
+.allergy-warning {
+    padding: var(--space-sm);
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: var(--radius-md);
+    color: #ef4444;
+    font-size: 0.9rem;
+}
+
+/* Form Sections */
+.prescription-form {
+    max-width: 900px;
+}
+
+.form-section {
+    background: var(--gradient-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: var(--space-lg);
+    margin-bottom: var(--space-lg);
+}
+
+.form-section h3 {
+    margin-bottom: var(--space-md);
+    font-size: 1.1rem;
+}
+
+.form-section .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-md);
+}
+
+.form-section .section-header h3 {
+    margin: 0;
+}
+
+/* Prescription Rows */
+.prescription-row {
+    display: flex;
+    gap: var(--space-md);
+    align-items: flex-start;
+    padding: var(--space-md);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-md);
+}
+
+.rx-number {
+    width: 32px;
+    height: 32px;
+    background: var(--primary);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.rx-fields {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-sm);
+}
+
+.rx-fields .full-width {
+    grid-column: span 4;
+}
+
+.remove-btn {
+    width: 32px;
+    height: 32px;
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    flex-shrink: 0;
+}
+
+.remove-btn:hover {
+    background: #ef4444;
+    color: white;
+}
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    gap: var(--space-md);
+    margin-top: var(--space-xl);
+}
+
+.success-message {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-lg);
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: var(--radius-lg);
+    width: 100%;
+}
+
+.success-icon {
+    font-size: 1.5rem;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .patient-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .rx-fields {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .rx-fields .full-width {
+        grid-column: span 2;
+    }
+}
+
+@media (max-width: 768px) {
+    .prescription-header {
+        flex-direction: column;
+        gap: var(--space-md);
+        text-align: center;
+    }
+
+    .patient-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .prescription-row {
+        flex-direction: column;
+    }
+
+    .rx-fields {
+        grid-template-columns: 1fr;
+    }
+
+    .rx-fields .full-width {
+        grid-column: span 1;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .success-message {
+        flex-direction: column;
+        text-align: center;
+    }
+}

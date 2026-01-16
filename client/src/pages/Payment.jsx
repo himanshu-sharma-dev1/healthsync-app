@@ -4,6 +4,10 @@ import { useAuth } from '../context/AuthContext';
 import { paymentService, appointmentService } from '../services/api';
 import './Payment.css';
 
+// Import images
+import doctorFemale from '../assets/images/doctor_avatar_female_1768411074828.png';
+import paymentSecure from '../assets/images/payment_secure_1768411142589.png';
+
 const Payment = () => {
     const { appointmentId } = useParams();
     const navigate = useNavigate();
@@ -149,9 +153,7 @@ const Payment = () => {
 
                         <div className="appointment-card">
                             <div className="doc-info">
-                                <div className="doc-avatar">
-                                    {appointment?.doctor?.firstName?.[0]}{appointment?.doctor?.lastName?.[0]}
-                                </div>
+                                <img src={doctorFemale} alt="Doctor" className="doc-avatar-img" />
                                 <div>
                                     <h4>Dr. {appointment?.doctor?.firstName} {appointment?.doctor?.lastName}</h4>
                                     <p>{appointment?.doctor?.specialty}</p>
@@ -194,8 +196,11 @@ const Payment = () => {
                         </div>
 
                         <div className="secure-badge">
-                            <span>🔒</span>
-                            <span>Secure Payment Protected by 256-bit SSL</span>
+                            <img src={paymentSecure} alt="Secure Payment" className="secure-badge-img" />
+                            <div>
+                                <span className="secure-title">🔒 Secure Payment</span>
+                                <span className="secure-text">Protected by 256-bit SSL encryption</span>
+                            </div>
                         </div>
                     </div>
 
