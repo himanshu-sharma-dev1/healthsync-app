@@ -122,7 +122,7 @@ Post pandemic, quick access to quality, affordable and reliable healthcare from 
 ## 📐 Design & Documentation
 
 ### UI/UX Design
-- **Design Presentation:** [View on Canva](https://www.canva.com/design/DAG-s2hhNY8/q-cqZD5alNpbGIUl2_74Gg/view)
+- **Design Presentation:** [View PDF](./docs/HealthSync_Design_Presentation.pdf)
 - **Information Architecture:** [View Document](./docs/INFORMATION_ARCHITECTURE.md)
 
 ### Design System
