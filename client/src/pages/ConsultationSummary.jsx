@@ -38,6 +38,24 @@ const ConsultationSummary = () => {
     // Fetch real consultation data
     useEffect(() => {
         const fetchConsultationData = async () => {
+            // First check sessionStorage for data passed from Dashboard
+            const storedInfo = sessionStorage.getItem('consultationInfo');
+            if (storedInfo) {
+                try {
+                    const info = JSON.parse(storedInfo);
+                    setConsultationData(prev => ({
+                        ...prev,
+                        doctorName: info.doctor || prev.doctorName,
+                        specialty: info.specialty || prev.specialty,
+                        date: info.date || prev.date,
+                        diagnosis: info.diagnosis || prev.diagnosis
+                    }));
+                    sessionStorage.removeItem('consultationInfo'); // Clean up
+                } catch (e) {
+                    console.log('Could not parse stored consultation info');
+                }
+            }
+
             try {
                 const token = localStorage.getItem('token');
                 const response = await fetch(`${API_URL}/video/consultation-summary/${appointmentId}`, {
@@ -47,13 +65,15 @@ const ConsultationSummary = () => {
                 if (response.ok) {
                     const data = await response.json();
                     if (data.success) {
+                        // Only update if we don't have sessionStorage data (to preserve clicked doctor)
+                        const hasStoredData = storedInfo !== null;
                         setConsultationData(prev => ({
                             ...prev,
-                            doctorName: data.doctorName || prev.doctorName,
-                            specialty: data.specialty || prev.specialty,
-                            date: data.date || prev.date,
+                            doctorName: hasStoredData ? prev.doctorName : (data.doctorName || prev.doctorName),
+                            specialty: hasStoredData ? prev.specialty : (data.specialty || prev.specialty),
+                            date: hasStoredData ? prev.date : (data.date || prev.date),
                             duration: data.duration || prev.duration,
-                            diagnosis: data.diagnosis || prev.diagnosis,
+                            diagnosis: hasStoredData ? prev.diagnosis : (data.diagnosis || prev.diagnosis),
                             recommendations: data.recommendations?.length ? data.recommendations : prev.recommendations,
                             prescriptions: data.prescriptions || prev.prescriptions,
                             nextSteps: data.nextSteps || prev.nextSteps,

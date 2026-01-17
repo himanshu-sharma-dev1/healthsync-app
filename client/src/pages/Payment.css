@@ -291,6 +291,25 @@
     border: 1px solid var(--border);
 }
 
+.payment-option.stripe {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+    border: 2px solid #6366f1;
+}
+
+.btn-stripe {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+    border: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-stripe:hover {
+    background: linear-gradient(135deg, #5558e3, #7c4fe8);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+}
+
 .option-header {
     display: flex;
     align-items: center;

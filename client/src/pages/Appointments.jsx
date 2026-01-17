@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext';
 import './Appointments.css';
 
 const Appointments = () => {
+    const { t } = useLanguage();
     const [filter, setFilter] = useState('all');
 
     // Demo appointments for hackathon
@@ -56,13 +58,36 @@ const Appointments = () => {
         return statusMap[status] || 'info';
     };
 
+    const getStatusText = (status) => {
+        const statusTextMap = {
+            all: t('all'),
+            scheduled: t('scheduled'),
+            confirmed: t('confirmed'),
+            completed: t('completed'),
+            cancelled: t('cancelled')
+        };
+        return statusTextMap[status] || status;
+    };
+
+    const getSpecialtyText = (specialty) => {
+        const specialtyMap = {
+            'Cardiologist': t('cardiologist'),
+            'General Physician': t('generalPhysician'),
+            'Dermatologist': t('dermatologist'),
+            'Orthopedic': t('orthopedic'),
+            'Pediatrician': t('pediatrician'),
+            'Psychiatrist': t('psychiatrist')
+        };
+        return specialtyMap[specialty] || specialty;
+    };
+
     return (
         <div className="appointments-page">
             <div className="container">
                 <div className="page-header">
-                    <h1>My Appointments</h1>
+                    <h1>{t('myAppointments')}</h1>
                     <Link to="/doctors" className="btn btn-primary">
-                        Book New Appointment
+                        {t('bookNewAppointment')}
                     </Link>
                 </div>
 
@@ -74,7 +99,7 @@ const Appointments = () => {
                             className={`filter-tab ${filter === tab ? 'active' : ''}`}
                             onClick={() => setFilter(tab)}
                         >
-                            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                            {getStatusText(tab)}
                         </button>
                     ))}
                 </div>
@@ -84,9 +109,9 @@ const Appointments = () => {
                     {filteredAppointments.length === 0 ? (
                         <div className="empty-state">
                             <span className="empty-icon">📅</span>
-                            <h3>No appointments found</h3>
-                            <p>You don't have any {filter !== 'all' ? filter : ''} appointments yet.</p>
-                            <Link to="/doctors" className="btn btn-primary">Book Consultation</Link>
+                            <h3>{t('myAppointments')}</h3>
+                            <p>{t('bookNewAppointment')}</p>
+                            <Link to="/doctors" className="btn btn-primary">{t('bookAppointment')}</Link>
                         </div>
                     ) : (
                         filteredAppointments.map((apt) => (
@@ -97,7 +122,7 @@ const Appointments = () => {
                                     </div>
                                     <div className="apt-doctor-info">
                                         <h4>Dr. {apt.doctor.firstName} {apt.doctor.lastName}</h4>
-                                        <p>{apt.doctor.specialty}</p>
+                                        <p>{getSpecialtyText(apt.doctor.specialty)}</p>
                                     </div>
                                 </div>
 
@@ -114,7 +139,7 @@ const Appointments = () => {
 
                                 <div className="apt-status">
                                     <span className={`badge badge-${getStatusBadge(apt.status)}`}>
-                                        {apt.status}
+                                        {getStatusText(apt.status)}
                                     </span>
                                 </div>
 
@@ -125,12 +150,12 @@ const Appointments = () => {
                                 <div className="apt-actions">
                                     {(apt.status === 'confirmed' || apt.status === 'scheduled') && (
                                         <Link to={`/video/${apt.id}`} className="btn btn-primary btn-sm">
-                                            Join Call
+                                            {t('joinCallBtn')}
                                         </Link>
                                     )}
                                     {apt.status === 'completed' && (
                                         <Link to={`/summary/${apt.id}`} className="btn btn-secondary btn-sm">
-                                            View Details
+                                            {t('viewDetails')}
                                         </Link>
                                     )}
                                 </div>
@@ -144,3 +169,4 @@ const Appointments = () => {
 };
 
 export default Appointments;
+

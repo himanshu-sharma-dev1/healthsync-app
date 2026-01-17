@@ -498,3 +498,98 @@
     accent-color: var(--primary);
     cursor: pointer;
 }
+
+/* Medical Profile Section */
+.section-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-lg);
+}
+
+.section-header-row .section-title {
+    margin-bottom: 0;
+}
+
+.medical-profile-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+}
+
+.medical-item {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    text-align: center;
+}
+
+.medical-label {
+    display: block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin-bottom: var(--space-sm);
+}
+
+.medical-value {
+    display: block;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.medical-value.blood-type {
+    color: #ef4444;
+}
+
+.medical-tags {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.tag-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.tag-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.tag {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.tag.allergy {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+}
+
+.tag.condition {
+    background: rgba(251, 191, 36, 0.2);
+    color: #fbbf24;
+}
+
+@media (max-width: 768px) {
+    .medical-profile-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .section-header-row {
+        flex-direction: column;
+        gap: var(--space-sm);
+        text-align: center;
+    }
+}

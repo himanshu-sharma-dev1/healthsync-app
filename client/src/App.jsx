@@ -22,6 +22,9 @@ import PaymentSuccess from './pages/PaymentSuccess';
 import WaitingRoom from './pages/WaitingRoom';
 import ConsultationSummary from './pages/ConsultationSummary';
 import EPrescription from './pages/EPrescription';
+import DoctorPrescription from './pages/DoctorPrescription';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import Profile from './pages/Profile';
 import './index.css';
 import './theme.css';
@@ -54,6 +57,8 @@ function App() {
                   <Route path="/" element={<Home />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
+                  <Route path="/forgot-password" element={<ForgotPassword />} />
+                  <Route path="/reset-password/:token" element={<ResetPassword />} />
                   <Route path="/doctors" element={<Doctors />} />
 
                   {/* Patient Flow Routes */}
@@ -68,8 +73,10 @@ function App() {
                   <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
                   <Route path="/appointments" element={<Appointments />} />
                   <Route path="/video/:appointmentId" element={<VideoCall />} />
+                  <Route path="/video/room/:roomName" element={<VideoCall />} />
                   <Route path="/summary/:appointmentId" element={<ConsultationSummary />} />
                   <Route path="/prescription/:appointmentId" element={<EPrescription />} />
+                  <Route path="/doctor-prescription/:appointmentId" element={<DoctorPrescription />} />
                   <Route path="/profile" element={<Profile />} />
                 </Routes>
               </main>

@@ -6,13 +6,24 @@ import { useLanguage } from '../context/LanguageContext';
 import './Profile.css';
 
 const Profile = () => {
-    const { user, logout } = useAuth();
+    const { user, logout, refreshUser } = useAuth();
     const { t } = useLanguage();
     const navigate = useNavigate();
 
     const [isEditing, setIsEditing] = useState(false);
+    const [isEditingMedical, setIsEditingMedical] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [message, setMessage] = useState('');
+
+    // Medical profile data
+    const [medicalData, setMedicalData] = useState({
+        bloodType: 'O+',
+        height: '175',
+        weight: '72',
+        emergencyContact: '+91 98765 43210',
+        allergies: 'Penicillin, Peanuts',
+        conditions: 'Mild anxiety'
+    });
 
     // Modal states
     const [showPasswordModal, setShowPasswordModal] = useState(false);
@@ -70,10 +81,39 @@ const Profile = () => {
 
         try {
             await authService.updateProfile(formData);
+            await refreshUser(); // Refresh user data to update UI
             setMessage('Profile updated successfully!');
             setIsEditing(false);
         } catch (error) {
             setMessage(error.message || 'Failed to update profile');
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const handleMedicalChange = (e) => {
+        const { name, value } = e.target;
+        setMedicalData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleMedicalSubmit = async (e) => {
+        e.preventDefault();
+        setIsSaving(true);
+        setMessage('');
+
+        try {
+            await authService.updateProfile({
+                bloodType: medicalData.bloodType,
+                height: medicalData.height + ' cm',
+                weight: medicalData.weight + ' kg',
+                emergencyContact: medicalData.emergencyContact,
+                allergies: medicalData.allergies.split(',').map(a => a.trim()),
+                conditions: medicalData.conditions.split(',').map(c => c.trim())
+            });
+            setMessage('Medical profile updated successfully!');
+            setIsEditingMedical(false);
+        } catch (error) {
+            setMessage(error.message || 'Failed to update medical profile');
         } finally {
             setIsSaving(false);
         }
@@ -162,7 +202,10 @@ const Profile = () => {
 
                             <button
                                 className="btn btn-edit-profile"
-                                onClick={() => setIsEditing(!isEditing)}
+                                onClick={() => {
+                                    setIsEditing(true);
+                                    document.getElementById('edit-section')?.scrollIntoView({ behavior: 'smooth' });
+                                }}
                             >
                                 ✏️ Edit Profile
                             </button>
@@ -222,10 +265,167 @@ const Profile = () => {
                             </div>
                         </div>
 
+                        {/* Medical Profile Section */}
+                        <div className="profile-section">
+                            <div className="section-header-row">
+                                <h3 className="section-title">📋 Medical Profile</h3>
+                                <button
+                                    className="btn btn-secondary btn-sm"
+                                    onClick={() => setIsEditingMedical(!isEditingMedical)}
+                                >
+                                    {isEditingMedical ? 'Cancel' : 'Edit Medical Info'}
+                                </button>
+                            </div>
+
+                            {!isEditingMedical ? (
+                                <>
+                                    <div className="medical-profile-grid">
+                                        <div className="medical-item">
+                                            <span className="medical-label">GENDER</span>
+                                            <span className="medical-value">{user?.gender ? user.gender.charAt(0).toUpperCase() + user.gender.slice(1) : 'Not set'}</span>
+                                        </div>
+                                        <div className="medical-item">
+                                            <span className="medical-label">AGE</span>
+                                            <span className="medical-value">
+                                                {user?.dateOfBirth
+                                                    ? Math.floor((new Date() - new Date(user.dateOfBirth)) / (365.25 * 24 * 60 * 60 * 1000)) + ' yrs'
+                                                    : 'Not set'}
+                                            </span>
+                                        </div>
+                                        <div className="medical-item">
+                                            <span className="medical-label">BLOOD TYPE</span>
+                                            <span className="medical-value blood-type">{medicalData.bloodType}</span>
+                                        </div>
+                                        <div className="medical-item">
+                                            <span className="medical-label">HEIGHT</span>
+                                            <span className="medical-value">{medicalData.height} cm</span>
+                                        </div>
+                                        <div className="medical-item">
+                                            <span className="medical-label">WEIGHT</span>
+                                            <span className="medical-value">{medicalData.weight} kg</span>
+                                        </div>
+                                        <div className="medical-item">
+                                            <span className="medical-label">EMERGENCY CONTACT</span>
+                                            <span className="medical-value">{medicalData.emergencyContact}</span>
+                                        </div>
+                                    </div>
+                                    <div className="medical-tags">
+                                        <div className="tag-group">
+                                            <span className="tag-label">⚠️ Allergies:</span>
+                                            {medicalData.allergies.split(',').map((a, i) => (
+                                                <span key={i} className="tag allergy">{a.trim()}</span>
+                                            ))}
+                                        </div>
+                                        <div className="tag-group">
+                                            <span className="tag-label">🏥 Conditions:</span>
+                                            {medicalData.conditions.split(',').map((c, i) => (
+                                                <span key={i} className="tag condition">{c.trim()}</span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </>
+                            ) : (
+                                <form onSubmit={handleMedicalSubmit} className="medical-edit-form">
+                                    <div className="form-grid">
+                                        <div className="form-group">
+                                            <label>Blood Type</label>
+                                            <select
+                                                name="bloodType"
+                                                value={medicalData.bloodType}
+                                                onChange={handleMedicalChange}
+                                                className="form-input form-input-dark"
+                                            >
+                                                <option value="">Select</option>
+                                                <option value="A+">A+</option>
+                                                <option value="A-">A-</option>
+                                                <option value="B+">B+</option>
+                                                <option value="B-">B-</option>
+                                                <option value="AB+">AB+</option>
+                                                <option value="AB-">AB-</option>
+                                                <option value="O+">O+</option>
+                                                <option value="O-">O-</option>
+                                            </select>
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Height (cm)</label>
+                                            <input
+                                                type="number"
+                                                name="height"
+                                                value={medicalData.height}
+                                                onChange={handleMedicalChange}
+                                                className="form-input form-input-dark"
+                                                placeholder="175"
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Weight (kg)</label>
+                                            <input
+                                                type="number"
+                                                name="weight"
+                                                value={medicalData.weight}
+                                                onChange={handleMedicalChange}
+                                                className="form-input form-input-dark"
+                                                placeholder="72"
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Emergency Contact</label>
+                                            <input
+                                                type="tel"
+                                                name="emergencyContact"
+                                                value={medicalData.emergencyContact}
+                                                onChange={handleMedicalChange}
+                                                className="form-input form-input-dark"
+                                                placeholder="+91 XXXXX XXXXX"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="form-group" style={{ marginTop: 'var(--space-md)' }}>
+                                        <label>Allergies (comma separated)</label>
+                                        <input
+                                            type="text"
+                                            name="allergies"
+                                            value={medicalData.allergies}
+                                            onChange={handleMedicalChange}
+                                            className="form-input form-input-dark"
+                                            placeholder="Penicillin, Peanuts"
+                                        />
+                                    </div>
+                                    <div className="form-group" style={{ marginTop: 'var(--space-md)' }}>
+                                        <label>Medical Conditions (comma separated)</label>
+                                        <input
+                                            type="text"
+                                            name="conditions"
+                                            value={medicalData.conditions}
+                                            onChange={handleMedicalChange}
+                                            className="form-input form-input-dark"
+                                            placeholder="Mild anxiety, Hypertension"
+                                        />
+                                    </div>
+                                    <div className="form-actions">
+                                        <button
+                                            type="button"
+                                            className="btn btn-secondary"
+                                            onClick={() => setIsEditingMedical(false)}
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            type="submit"
+                                            className="btn btn-primary btn-gradient"
+                                            disabled={isSaving}
+                                        >
+                                            {isSaving ? 'Saving...' : '💾 Save Medical Info'}
+                                        </button>
+                                    </div>
+                                </form>
+                            )}
+                        </div>
+
                         {/* Edit Form (shown when editing) */}
                         {isEditing && (
-                            <div className="profile-section profile-edit-card">
-                                <h3 className="section-title">✏️ Edit Information</h3>
+                            <div id="edit-section" className="profile-section profile-edit-card">
+                                <h3 className="section-title">✏️ Edit Personal Information</h3>
                                 <form onSubmit={handleSubmit}>
                                     <div className="form-grid">
                                         <div className="form-group">
@@ -260,11 +460,25 @@ const Profile = () => {
                                             />
                                         </div>
                                         <div className="form-group">
+                                            <label>Gender</label>
+                                            <select
+                                                name="gender"
+                                                value={formData.gender}
+                                                onChange={handleChange}
+                                                className="form-input form-input-dark"
+                                            >
+                                                <option value="">Select Gender</option>
+                                                <option value="male">Male</option>
+                                                <option value="female">Female</option>
+                                                <option value="other">Other</option>
+                                            </select>
+                                        </div>
+                                        <div className="form-group">
                                             <label>Date of Birth</label>
                                             <input
                                                 type="date"
                                                 name="dateOfBirth"
-                                                value={formData.dateOfBirth}
+                                                value={formData.dateOfBirth ? formData.dateOfBirth.split('T')[0] : ''}
                                                 onChange={handleChange}
                                                 className="form-input form-input-dark"
                                             />

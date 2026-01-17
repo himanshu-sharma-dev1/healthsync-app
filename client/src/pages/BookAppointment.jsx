@@ -98,6 +98,39 @@ const BookAppointment = () => {
         setBookingLoading(true);
         setError('');
 
+        // Create the new appointment object
+        const appointmentId = `apt-${Date.now()}`;
+        const formattedDate = new Date(selectedDate).toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+        });
+
+        const newAppointment = {
+            id: appointmentId,
+            doctor: `Dr. ${doctor?.firstName} ${doctor?.lastName}`,
+            specialty: doctor?.specialty || 'General Physician',
+            date: formattedDate,
+            time: selectedTime,
+            status: 'scheduled',
+            consultationFee: doctor?.consultationFee || 800
+        };
+
+        // Save to localStorage for Dashboard to pick up
+        try {
+            const existingAppointments = JSON.parse(localStorage.getItem('healthsync_upcoming') || '[]');
+            existingAppointments.push(newAppointment);
+            localStorage.setItem('healthsync_upcoming', JSON.stringify(existingAppointments));
+            console.log('✅ Appointment saved to localStorage:', newAppointment);
+
+            // Send confirmation email/SMS (simulated)
+            const { sendBookingConfirmation } = await import('../services/reminderService');
+            await sendBookingConfirmation(newAppointment, user?.email);
+            console.log('📧 Confirmation email/SMS sent!');
+        } catch (storageError) {
+            console.error('Error saving to localStorage:', storageError);
+        }
+
         try {
             const appointmentData = {
                 doctorId: doctor._id,
@@ -115,8 +148,8 @@ const BookAppointment = () => {
             navigate(`/payment/${response.appointment._id}`);
         } catch (err) {
             setError(err.message || 'Failed to book appointment');
-            // For demo, navigate anyway
-            navigate(`/payment/demo-${Date.now()}`);
+            // For demo, navigate anyway with our generated ID
+            navigate(`/payment/${appointmentId}`);
         } finally {
             setBookingLoading(false);
         }

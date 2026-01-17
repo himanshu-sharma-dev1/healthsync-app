@@ -175,23 +175,29 @@ export function setupTranscriptionWebSocket(io) {
         // Start DeepGram stream when client requests
         socket.on('start-stream', () => {
             try {
+                console.log('🎙️ Starting DeepGram live transcription...');
+                // Config for raw PCM audio (linear16 from Web Audio API)
                 deepgramLive = client.listen.live({
                     model: 'nova-2-medical',
                     language: 'en-US',
                     smart_format: true,
                     interim_results: true,
                     punctuate: true,
-                    endpointing: 300
+                    endpointing: 300,
+                    encoding: 'linear16',
+                    sample_rate: 16000,
+                    channels: 1
                 });
 
                 deepgramLive.on(LiveTranscriptionEvents.Open, () => {
-                    console.log('DeepGram connection opened');
+                    console.log('✅ DeepGram connection opened - ready for audio');
                     socket.emit('status', 'ready');
                 });
 
                 deepgramLive.on(LiveTranscriptionEvents.Transcript, (data) => {
                     const transcript = data.channel?.alternatives[0]?.transcript;
                     if (transcript) {
+                        console.log('📝 DeepGram transcript:', transcript);
                         // Send back to this specific socket (and potentially room)
                         socket.emit('transcription-data', {
                             text: transcript,
@@ -202,13 +208,16 @@ export function setupTranscriptionWebSocket(io) {
                 });
 
                 deepgramLive.on(LiveTranscriptionEvents.Error, (error) => {
-                    console.error('DeepGram error:', error);
-                    socket.emit('error', { message: error.message });
+                    console.error('❌ DeepGram error:', error);
+                    socket.emit('error', { message: error.message || 'DeepGram error' });
                 });
 
                 deepgramLive.on(LiveTranscriptionEvents.Close, () => {
                     console.log('DeepGram connection closed');
                 });
+
+                // Log that connection is being attempted
+                console.log('🔄 DeepGram connection initiated, waiting for Open event...');
 
             } catch (error) {
                 console.error('Failed to create DeepGram connection:', error);
@@ -216,10 +225,17 @@ export function setupTranscriptionWebSocket(io) {
             }
         });
 
+        let audioChunkCount = 0;
         // Receive audio data from client
         socket.on('audio-data', (data) => {
+            audioChunkCount++;
+            if (audioChunkCount % 10 === 1) {
+                console.log(`🎵 Audio chunk #${audioChunkCount} received, size: ${data?.byteLength || data?.length} bytes`);
+            }
             if (deepgramLive && deepgramLive.getReadyState() === 1) {
                 deepgramLive.send(data);
+            } else {
+                console.log('⚠️ DeepGram not ready (state:', deepgramLive?.getReadyState(), '), dropping audio chunk');
             }
         });
 

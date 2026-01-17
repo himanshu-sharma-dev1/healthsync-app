@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
+import { useLanguage } from '../context/LanguageContext';
 import './NotificationBell.css';
 
 const NotificationBell = () => {
+    const { t } = useLanguage();
     const [notifications, setNotifications] = useState([]);
     const [isOpen, setIsOpen] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
@@ -12,40 +14,44 @@ const NotificationBell = () => {
             {
                 id: 1,
                 type: 'reminder',
-                title: '⏰ Appointment Reminder',
-                message: 'Your consultation with Dr. Smith is in 1 hour',
-                time: '5 min ago',
+                titleKey: 'appointmentReminder',
+                title: `⏰ ${t('appointmentReminder')}`,
+                message: t('language') === 'hi' ? 'डॉ. स्मिथ के साथ आपका परामर्श 1 घंटे में है' : 'Your consultation with Dr. Smith is in 1 hour',
+                time: `5 ${t('minAgo')}`,
                 read: false
             },
             {
                 id: 2,
                 type: 'info',
-                title: '📋 Preparation Checklist',
-                message: 'Remember to have your symptoms and questions ready',
-                time: '30 min ago',
+                titleKey: 'preparationChecklist',
+                title: `📋 ${t('preparationChecklist')}`,
+                message: t('language') === 'hi' ? 'अपने लक्षण और प्रश्न तैयार रखें' : 'Remember to have your symptoms and questions ready',
+                time: `30 ${t('minAgo')}`,
                 read: false
             },
             {
                 id: 3,
                 type: 'success',
-                title: '✅ Payment Confirmed',
-                message: 'Your payment of ₹500 was successful',
-                time: '1 hour ago',
+                titleKey: 'paymentConfirmed',
+                title: `✅ ${t('paymentConfirmed')}`,
+                message: t('language') === 'hi' ? '₹500 का भुगतान सफल रहा' : 'Your payment of ₹500 was successful',
+                time: `1 ${t('hourAgo')}`,
                 read: true
             },
             {
                 id: 4,
                 type: 'info',
-                title: '📄 Prescription Ready',
-                message: 'Your prescription from the last consultation is ready',
-                time: '2 hours ago',
+                titleKey: 'prescriptionReady',
+                title: `📄 ${t('prescriptionReady')}`,
+                message: t('language') === 'hi' ? 'आपका प्रिस्क्रिप्शन तैयार है' : 'Your prescription from the last consultation is ready',
+                time: `2 ${t('hourAgo')}`,
                 read: true
             }
         ];
 
         setNotifications(demoNotifications);
         setUnreadCount(demoNotifications.filter(n => !n.read).length);
-    }, []);
+    }, [t]);
 
     const markAsRead = (id) => {
         setNotifications(prev =>
@@ -69,7 +75,7 @@ const NotificationBell = () => {
             <button
                 className="bell-btn"
                 onClick={() => setIsOpen(!isOpen)}
-                aria-label="Notifications"
+                aria-label={t('notifications')}
             >
                 🔔
                 {unreadCount > 0 && (
@@ -80,11 +86,11 @@ const NotificationBell = () => {
             {isOpen && (
                 <div className="notification-dropdown">
                     <div className="dropdown-header">
-                        <h4>Notifications</h4>
+                        <h4>{t('notifications')}</h4>
                         {notifications.length > 0 && (
                             <div className="header-actions">
-                                <button onClick={markAllAsRead}>Mark all read</button>
-                                <button onClick={clearAll}>Clear all</button>
+                                <button onClick={markAllAsRead}>{t('markAllRead')}</button>
+                                <button onClick={clearAll}>{t('clearAll')}</button>
                             </div>
                         )}
                     </div>
@@ -93,7 +99,7 @@ const NotificationBell = () => {
                         {notifications.length === 0 ? (
                             <div className="empty-state">
                                 <span>🔕</span>
-                                <p>No notifications</p>
+                                <p>{t('notifications')}</p>
                             </div>
                         ) : (
                             notifications.map(notif => (
@@ -119,3 +125,4 @@ const NotificationBell = () => {
 };
 
 export default NotificationBell;
+

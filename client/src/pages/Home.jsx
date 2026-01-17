@@ -1,5 +1,6 @@
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
 import './Home.css';
 
 // Import generated images
@@ -14,6 +15,12 @@ import healthsyncLogo from '../assets/images/healthsync_logo_1768411126010.png';
 
 const Home = () => {
     const { t } = useLanguage();
+    const { isAuthenticated, loading } = useAuth();
+
+    // Redirect logged-in users to dashboard
+    if (!loading && isAuthenticated) {
+        return <Navigate to="/dashboard" replace />;
+    }
 
     return (
         <div className="home">
@@ -63,7 +70,7 @@ const Home = () => {
                             </div>
                             <div className="card-body">
                                 <p>Ready for your consultation?</p>
-                                <Link to="/doctors" className="btn btn-primary btn-sm">📹 Start Video Call</Link>
+                                <Link to="/login" className="btn btn-primary btn-sm">📹 Start Video Call</Link>
                             </div>
                         </div>
 

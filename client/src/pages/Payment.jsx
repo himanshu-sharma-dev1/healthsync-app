@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { appointmentService } from '../services/api';
 import './Payment.css';
 
@@ -14,6 +15,7 @@ const Payment = () => {
     const { appointmentId } = useParams();
     const navigate = useNavigate();
     const { isAuthenticated, user } = useAuth();
+    const { t } = useLanguage();
 
     const [appointment, setAppointment] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -94,9 +96,61 @@ const Payment = () => {
         }
     };
 
+    // Stripe Checkout - Redirects to Stripe's hosted payment page
+    const handleStripeCheckout = async () => {
+        setProcessing(true);
+        setError('');
+
+        try {
+            const response = await fetch(`${API_URL}/stripe/create-session`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({
+                    appointmentId,
+                    doctorName: `Dr. ${appointment?.doctor?.firstName} ${appointment?.doctor?.lastName}`,
+                    amount: appointment?.doctor?.consultationFee || 800,
+                    patientEmail: user?.email
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success && data.url) {
+                setSuccess('Redirecting to Stripe payment page...');
+                // Save doctor info before redirect
+                sessionStorage.setItem('appointmentDoctor', JSON.stringify({
+                    name: `Dr. ${appointment.doctor.firstName} ${appointment.doctor.lastName}`,
+                    specialty: appointment?.doctor?.specialty || 'Cardiologist',
+                    time: appointment?.scheduledTime || '10:00 AM'
+                }));
+                window.location.href = data.url;
+            } else {
+                setError(data.message || 'Failed to create Stripe checkout session');
+            }
+        } catch (err) {
+            console.error('Stripe checkout error:', err);
+            setError('Failed to connect to Stripe. Please try again.');
+        } finally {
+            setProcessing(false);
+        }
+    };
+
     // Demo Skip - For testing only
     const handleDemoSkip = async () => {
         setProcessing(true);
+
+        // Save doctor info for waiting room and video call pages
+        sessionStorage.setItem('appointmentDoctor', JSON.stringify({
+            name: appointment?.doctor?.firstName
+                ? `Dr. ${appointment.doctor.firstName} ${appointment.doctor.lastName}`
+                : 'Dr. Sarah Johnson',
+            specialty: appointment?.doctor?.specialty || 'Cardiologist',
+            time: appointment?.scheduledTime || '10:00 AM'
+        }));
+
         try {
             // Call demo payment endpoint
             const response = await fetch(`${API_URL}/payments/create`, {
@@ -162,7 +216,7 @@ const Payment = () => {
                 <div className="payment-layout">
                     {/* Order Summary */}
                     <div className="order-summary">
-                        <h2>Order Summary</h2>
+                        <h2>{t('orderSummary')}</h2>
 
                         <div className="appointment-card">
                             <div className="doc-info">
@@ -175,7 +229,7 @@ const Payment = () => {
 
                             <div className="apt-details">
                                 <div className="detail-row">
-                                    <span>📅 Date</span>
+                                    <span>📅 {t('date')}</span>
                                     <span>{new Date(appointment?.scheduledDate).toLocaleDateString('en-US', {
                                         weekday: 'long',
                                         month: 'long',
@@ -183,27 +237,27 @@ const Payment = () => {
                                     })}</span>
                                 </div>
                                 <div className="detail-row">
-                                    <span>⏰ Time</span>
+                                    <span>⏰ {t('time')}</span>
                                     <span>{appointment?.scheduledTime}</span>
                                 </div>
                                 <div className="detail-row">
-                                    <span>📹 Type</span>
-                                    <span>Video Consultation</span>
+                                    <span>📹 {t('type')}</span>
+                                    <span>{t('videoConsultation')}</span>
                                 </div>
                             </div>
                         </div>
 
                         <div className="price-breakdown">
                             <div className="price-row">
-                                <span>Consultation Fee</span>
+                                <span>{t('consultationFee')}</span>
                                 <span>₹{appointment?.doctor?.consultationFee}</span>
                             </div>
                             <div className="price-row">
-                                <span>Platform Fee</span>
+                                <span>{t('platformFee')}</span>
                                 <span>₹0</span>
                             </div>
                             <div className="price-row total">
-                                <span>Total</span>
+                                <span>{t('total')}</span>
                                 <span>₹{appointment?.doctor?.consultationFee}</span>
                             </div>
                         </div>
@@ -211,15 +265,15 @@ const Payment = () => {
                         <div className="secure-badge">
                             <img src={paymentSecure} alt="Secure Payment" className="secure-badge-img" />
                             <div>
-                                <span className="secure-title">🔒 Secure Payment</span>
-                                <span className="secure-text">Powered by Square • PCI DSS Compliant</span>
+                                <span className="secure-title">🔒 {t('securePaymentBadge')}</span>
+                                <span className="secure-text">{t('poweredBySquare')}</span>
                             </div>
                         </div>
                     </div>
 
                     {/* Payment Options */}
                     <div className="payment-form-container">
-                        <h2>Complete Payment</h2>
+                        <h2>{t('completePayment')}</h2>
 
                         {error && (
                             <div className="alert alert-error">{error}</div>
@@ -234,8 +288,8 @@ const Payment = () => {
                             <div className="option-header">
                                 <span className="option-icon">💳</span>
                                 <div>
-                                    <h3>Pay with Square</h3>
-                                    <p>Secure card payment via Square's checkout</p>
+                                    <h3>{t('payWithSquare')}</h3>
+                                    <p>{t('secureCardPayment')}</p>
                                 </div>
                             </div>
 
@@ -258,9 +312,48 @@ const Payment = () => {
                             </button>
 
                             <div className="payment-features">
-                                <span>✓ Credit/Debit Cards</span>
-                                <span>✓ Apple Pay</span>
-                                <span>✓ Google Pay</span>
+                                <span>✓ {t('creditDebitCards')}</span>
+                                <span>✓ {t('applePay')}</span>
+                                <span>✓ {t('googlePay')}</span>
+                            </div>
+                        </div>
+
+                        <div className="divider">
+                            <span>or</span>
+                        </div>
+
+                        {/* Stripe Payment - Alternative */}
+                        <div className="payment-option stripe animate-fadeIn">
+                            <div className="option-header">
+                                <span className="option-icon">💎</span>
+                                <div>
+                                    <h3>Pay with Stripe</h3>
+                                    <p>Secure international payment gateway</p>
+                                </div>
+                            </div>
+
+                            <button
+                                className="btn btn-stripe btn-lg w-full"
+                                onClick={handleStripeCheckout}
+                                disabled={processing}
+                            >
+                                {processing ? (
+                                    <>
+                                        <span className="spinner-small"></span>
+                                        Processing...
+                                    </>
+                                ) : (
+                                    <>
+                                        <span>💎</span>
+                                        Pay ₹{appointment?.doctor?.consultationFee} with Stripe
+                                    </>
+                                )}
+                            </button>
+
+                            <div className="payment-features">
+                                <span>✓ All Cards</span>
+                                <span>✓ UPI</span>
+                                <span>✓ Net Banking</span>
                             </div>
                         </div>
 
@@ -273,8 +366,8 @@ const Payment = () => {
                             <div className="option-header">
                                 <span className="option-icon">🎭</span>
                                 <div>
-                                    <h3>Demo Mode</h3>
-                                    <p>Skip payment for testing (hackathon demo only)</p>
+                                    <h3>{t('demoMode')}</h3>
+                                    <p>{t('skipPaymentDesc')}</p>
                                 </div>
                             </div>
 
@@ -283,13 +376,13 @@ const Payment = () => {
                                 onClick={handleDemoSkip}
                                 disabled={processing}
                             >
-                                Skip to Consultation
+                                {t('skipPayment')}
                             </button>
                         </div>
 
                         {/* Test Card Info */}
                         <div className="test-card-info">
-                            <h4>🧪 Sandbox Test Cards</h4>
+                            <h4>🧪 {t('sandboxTestCards')}</h4>
                             <p>Use these on Square's checkout page:</p>
                             <ul>
                                 <li><strong>Visa:</strong> 4532 0151 1283 0366</li>

@@ -114,7 +114,86 @@ const translations = {
         // Accessibility
         accessibility: 'Accessibility',
         fontSize: 'Font Size',
-        highContrast: 'High Contrast'
+        highContrast: 'High Contrast',
+
+        // Notifications
+        notifications: 'Notifications',
+        markAllRead: 'Mark all read',
+        clearAll: 'Clear all',
+        appointmentReminder: 'Appointment Reminder',
+        preparationChecklist: 'Preparation Checklist',
+        paymentConfirmed: 'Payment Confirmed',
+        prescriptionReady: 'Prescription Ready',
+        minAgo: 'min ago',
+        hourAgo: 'hour ago',
+
+        // Patient Intake
+        symptoms: 'Symptoms',
+        history: 'History',
+        specialty: 'Specialty',
+        whatBringsYou: 'What brings you in today?',
+        reasonForVisit: 'Reason for Visit',
+        selectSymptoms: 'Select your symptoms (if any)',
+        howLong: 'How long have you had these symptoms?',
+        selectDuration: 'Select duration',
+        continueBtn: 'Continue',
+
+        // Symptom names
+        fever: 'Fever',
+        headache: 'Headache',
+        cough: 'Cough',
+        fatigue: 'Fatigue',
+        chestPain: 'Chest Pain',
+        shortnessOfBreath: 'Shortness of Breath',
+        skinRash: 'Skin Rash',
+        jointPain: 'Joint Pain',
+        anxiety: 'Anxiety',
+        depression: 'Depression',
+        stomachPain: 'Stomach Pain',
+        nausea: 'Nausea',
+        backPain: 'Back Pain',
+        other: 'Other',
+
+        // Appointments Page
+        myAppointments: 'My Appointments',
+        bookNewAppointment: 'Book New Appointment',
+        all: 'All',
+        scheduled: 'Scheduled',
+        confirmed: 'Confirmed',
+        cancelled: 'Cancelled',
+        joinCallBtn: 'Join Call',
+        viewDetails: 'View Details',
+
+        // Payment Page
+        orderSummary: 'Order Summary',
+        completePayment: 'Complete Payment',
+        payWithSquare: 'Pay with Square',
+        secureCardPayment: 'Secure card payment via Square checkout',
+        paySecurely: 'Pay Securely',
+        creditDebitCards: 'Credit/Debit Cards',
+        applePay: 'Apple Pay',
+        googlePay: 'Google Pay',
+        demoMode: 'Demo Mode',
+        skipPayment: 'Skip to Consultation',
+        skipPaymentDesc: 'Skip payment for testing (hackathon demo only)',
+        consultationFee: 'Consultation Fee',
+        platformFee: 'Platform Fee',
+        total: 'Total',
+        securePaymentBadge: 'Secure Payment',
+        poweredBySquare: 'Powered by Square - PCI DSS Compliant',
+        sandboxTestCards: 'Sandbox Test Cards',
+        date: 'Date',
+        time: 'Time',
+        type: 'Type',
+        videoConsultation: 'Video Consultation',
+
+        // Common labels
+        cardiologist: 'Cardiologist',
+        generalPhysician: 'General Physician',
+        dermatologist: 'Dermatologist',
+        orthopedic: 'Orthopedic',
+        pediatrician: 'Pediatrician',
+        psychiatrist: 'Psychiatrist'
     },
     hi: {
         // Common
@@ -226,12 +305,93 @@ const translations = {
         // Accessibility
         accessibility: 'एक्सेसिबिलिटी',
         fontSize: 'फ़ॉन्ट आकार',
-        highContrast: 'उच्च कंट्रास्ट'
+        highContrast: 'उच्च कंट्रास्ट',
+
+        // Notifications
+        notifications: 'सूचनाएं',
+        markAllRead: 'सभी पढ़ा हुआ चिह्नित करें',
+        clearAll: 'सभी साफ़ करें',
+        appointmentReminder: 'अपॉइंटमेंट रिमाइंडर',
+        preparationChecklist: 'तैयारी चेकलिस्ट',
+        paymentConfirmed: 'भुगतान पुष्टि',
+        prescriptionReady: 'प्रिस्क्रिप्शन तैयार',
+        minAgo: 'मिनट पहले',
+        hourAgo: 'घंटे पहले',
+
+        // Patient Intake
+        symptoms: 'लक्षण',
+        history: 'इतिहास',
+        specialty: 'विशेषता',
+        whatBringsYou: 'आज आपको क्या लाया?',
+        reasonForVisit: 'मिलने का कारण',
+        selectSymptoms: 'अपने लक्षण चुनें (यदि कोई हो)',
+        howLong: 'आपको ये लक्षण कितने समय से हैं?',
+        selectDuration: 'अवधि चुनें',
+        continueBtn: 'जारी रखें',
+
+        // Symptom names
+        fever: 'बुखार',
+        headache: 'सिरदर्द',
+        cough: 'खांसी',
+        fatigue: 'थकान',
+        chestPain: 'सीने में दर्द',
+        shortnessOfBreath: 'सांस की तकलीफ',
+        skinRash: 'त्वचा पर चकत्ते',
+        jointPain: 'जोड़ों में दर्द',
+        anxiety: 'चिंता',
+        depression: 'अवसाद',
+        stomachPain: 'पेट दर्द',
+        nausea: 'मतली',
+        backPain: 'पीठ दर्द',
+        other: 'अन्य',
+
+        // Appointments Page
+        myAppointments: 'मेरी अपॉइंटमेंट',
+        bookNewAppointment: 'नई अपॉइंटमेंट बुक करें',
+        all: 'सभी',
+        scheduled: 'अनुसूचित',
+        confirmed: 'पुष्टि हुई',
+        cancelled: 'रद्द',
+        joinCallBtn: 'कॉल में शामिल हों',
+        viewDetails: 'विवरण देखें',
+
+        // Payment Page
+        orderSummary: 'ऑर्डर सारांश',
+        completePayment: 'भुगतान पूरा करें',
+        payWithSquare: 'स्क्वायर से भुगतान करें',
+        secureCardPayment: 'स्क्वायर चेकआउट के माध्यम से सुरक्षित कार्ड भुगतान',
+        paySecurely: 'सुरक्षित भुगतान करें',
+        creditDebitCards: 'क्रेडिट/डेबिट कार्ड',
+        applePay: 'एप्पल पे',
+        googlePay: 'गूगल पे',
+        demoMode: 'डेमो मोड',
+        skipPayment: 'परामर्श पर जाएं',
+        skipPaymentDesc: 'परीक्षण के लिए भुगतान छोड़ें (हैकाथॉन डेमो केवल)',
+        consultationFee: 'परामर्श शुल्क',
+        platformFee: 'प्लेटफॉर्म शुल्क',
+        total: 'कुल',
+        securePaymentBadge: 'सुरक्षित भुगतान',
+        poweredBySquare: 'स्क्वायर द्वारा संचालित - पीसीआई डीएसएस अनुपालक',
+        sandboxTestCards: 'सैंडबॉक्स टेस्ट कार्ड',
+        date: 'तारीख',
+        time: 'समय',
+        type: 'प्रकार',
+        videoConsultation: 'वीडियो परामर्श',
+
+        // Common labels
+        cardiologist: 'हृदय रोग विशेषज्ञ',
+        generalPhysician: 'सामान्य चिकित्सक',
+        dermatologist: 'त्वचा विशेषज्ञ',
+        orthopedic: 'हड्डी रोग विशेषज्ञ',
+        pediatrician: 'बाल रोग विशेषज्ञ',
+        psychiatrist: 'मनोचिकित्सक'
     }
 };
 
 export const LanguageProvider = ({ children }) => {
     const [language, setLanguage] = useState('en');
+    const [dynamicTranslations, setDynamicTranslations] = useState({});
+    const [isTranslating, setIsTranslating] = useState(false);
 
     // Load saved language preference
     useEffect(() => {
@@ -248,13 +408,54 @@ export const LanguageProvider = ({ children }) => {
         document.documentElement.lang = lang;
     };
 
-    // Get translation function
+    // Get static translation function
     const t = (key) => {
         return translations[language][key] || key;
     };
 
+    // Dynamic translation using Lingva API (for text not in static translations)
+    const translateDynamic = async (text, targetLang = null) => {
+        const target = targetLang || language;
+
+        // If English, return as-is
+        if (target === 'en' || !text) return text;
+
+        // Check cache first
+        const cacheKey = `${text}_${target}`;
+        if (dynamicTranslations[cacheKey]) {
+            return dynamicTranslations[cacheKey];
+        }
+
+        try {
+            // Import translate function dynamically to avoid circular dependency
+            const { translateText } = await import('../services/translateService');
+            setIsTranslating(true);
+            const translated = await translateText(text, 'en', target);
+
+            // Cache the translation
+            setDynamicTranslations(prev => ({
+                ...prev,
+                [cacheKey]: translated
+            }));
+
+            setIsTranslating(false);
+            return translated;
+        } catch (error) {
+            console.error('Translation error:', error);
+            setIsTranslating(false);
+            return text; // Fallback to original
+        }
+    };
+
     return (
-        <LanguageContext.Provider value={{ language, changeLanguage, t, translations }}>
+        <LanguageContext.Provider value={{
+            language,
+            changeLanguage,
+            t,
+            translateDynamic,
+            isTranslating,
+            translations
+        }}>
             {children}
         </LanguageContext.Provider>
     );

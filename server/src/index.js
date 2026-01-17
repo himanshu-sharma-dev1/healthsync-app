@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import connectDB from './config/database.js';
@@ -13,6 +15,9 @@ import paymentRoutes from './routes/payments.js';
 import videoRoutes from './routes/video.js';
 import transcriptionRoutes, { setupTranscriptionWebSocket } from './routes/transcription.js';
 import aiRoutes from './routes/ai.js';
+import stripeRoutes from './routes/stripe.js';
+import googleAuthRoutes from './routes/googleAuth.js';
+import passwordResetRoutes from './routes/passwordReset.js';
 
 dotenv.config();
 
@@ -27,24 +32,77 @@ const io = new Server(httpServer, {
   }
 });
 
-// Middleware
+// ============================================
+// HIPAA COMPLIANT SECURITY MIDDLEWARE
+// ============================================
+
+// CORS - MUST come first to handle preflight OPTIONS requests
 app.use(cors({
   origin: process.env.CLIENT_URL || 'http://localhost:5173',
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
+
+// Security headers (Helmet)
+app.use(helmet({
+  contentSecurityPolicy: false, // Disable for dev, enable in production
+  crossOriginEmbedderPolicy: false
+}));
+
+// Rate limiting - Prevent brute force attacks
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: { success: false, message: 'Too many requests, please try again later' }
+});
+app.use('/api/', limiter);
+
+// Stricter rate limit for auth routes
+const authLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 10, // 10 login attempts per hour
+  message: { success: false, message: 'Too many login attempts, please try again later' }
+});
+app.use('/api/auth/login', authLimiter);
+
+// Audit logging middleware - Track PHI access (HIPAA requirement)
+app.use((req, res, next) => {
+  const sensitiveRoutes = ['/api/appointments', '/api/video', '/api/transcription'];
+  if (sensitiveRoutes.some(route => req.path.startsWith(route))) {
+    console.log(`[AUDIT] ${new Date().toISOString()} | ${req.method} ${req.path} | IP: ${req.ip} | User: ${req.user?.id || 'anonymous'}`);
+  }
+  next();
+});
+
+// Security headers for PHI protection
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  next();
+});
+
+console.log('🔒 HIPAA Security: Enabled (Helmet, Rate Limiting, Audit Logging)');
 
 // Connect to MongoDB
 connectDB();
 
 // API Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/auth', googleAuthRoutes); // Google OAuth routes
+app.use('/api/auth', passwordResetRoutes); // Password reset routes
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/doctors', doctorRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/video', videoRoutes);
 app.use('/api/transcription', transcriptionRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/stripe', stripeRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

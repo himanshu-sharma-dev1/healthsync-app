@@ -27,10 +27,30 @@ const WaitingRoom = () => {
     const [estimatedWait, setEstimatedWait] = useState(5);
     const [countdown, setCountdown] = useState(null);
 
+    // Doctor info from booking flow
+    const [doctorInfo, setDoctorInfo] = useState({
+        name: 'Dr. Sarah Johnson',
+        specialty: 'Cardiologist',
+        time: '10:00 AM'
+    });
+
     // Consent and compliance states
     const [hasConsented, setHasConsented] = useState(false);
     const [consentTimestamp, setConsentTimestamp] = useState(null);
     const [currentComfortMessage, setCurrentComfortMessage] = useState(0);
+
+    // Load doctor info from sessionStorage (set during booking)
+    useEffect(() => {
+        const storedDoctor = sessionStorage.getItem('appointmentDoctor');
+        if (storedDoctor) {
+            const parsed = JSON.parse(storedDoctor);
+            setDoctorInfo({
+                name: parsed.name || 'Dr. Sarah Johnson',
+                specialty: parsed.specialty || 'Cardiologist',
+                time: parsed.time || '10:00 AM'
+            });
+        }
+    }, []);
 
     // Rotate comfort messages
     useEffect(() => {
@@ -163,10 +183,10 @@ const WaitingRoom = () => {
                     <div className="doctor-preview">
                         <div className="preview-card">
                             <div className="preview-header">
-                                <img src={doctorFemale} alt="Dr. Sarah Johnson" className="doc-avatar-img" />
+                                <img src={doctorFemale} alt={doctorInfo.name} className="doc-avatar-img" />
                                 <div>
-                                    <h3>Dr. Sarah Johnson</h3>
-                                    <p>Cardiologist</p>
+                                    <h3>{doctorInfo.name}</h3>
+                                    <p>{doctorInfo.specialty}</p>
                                 </div>
                                 <span className={`status-badge ${status === 'ready' ? 'online' : 'busy'}`}>
                                     {status === 'ready' ? '🟢 Online' : '🟡 In Session'}
@@ -177,7 +197,7 @@ const WaitingRoom = () => {
                                 <p>Your scheduled consultation</p>
                                 <div className="appointment-details">
                                     <span>📅 Today</span>
-                                    <span>⏰ 10:00 AM</span>
+                                    <span>⏰ {doctorInfo.time}</span>
                                     <span>📹 Video Call</span>
                                 </div>
                             </div>

@@ -182,6 +182,70 @@
     margin-bottom: var(--space-xl);
 }
 
+/* Sort Controls */
+.sort-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+    padding: var(--space-sm) var(--space-md);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    width: fit-content;
+}
+
+.sort-controls label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.sort-select {
+    padding: 6px 12px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.sort-select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+/* Empty State */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-2xl);
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+.empty-state span {
+    font-size: 3rem;
+    margin-bottom: var(--space-md);
+}
+
+.empty-state p {
+    margin-bottom: var(--space-md);
+}
+
+/* Danger button */
+.btn-danger {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.btn-danger:hover {
+    background: #ef4444;
+    color: white;
+}
+
 .section-header {
     display: flex;
     justify-content: space-between;

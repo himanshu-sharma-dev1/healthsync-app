@@ -151,15 +151,27 @@ router.put('/profile', protect, async (req, res) => {
         const allowedFields = [
             'firstName', 'lastName', 'phone', 'dateOfBirth',
             'gender', 'medicalHistory', 'specialty', 'qualifications',
-            'experience', 'consultationFee', 'availability', 'profileImage'
+            'experience', 'consultationFee', 'availability', 'profileImage',
+            // Medical profile fields
+            'bloodType', 'height', 'weight', 'emergencyContact',
+            'allergies', 'conditions', 'address'
         ];
+
+        // Fields that have enum validation - only include if non-empty
+        const enumFields = ['gender', 'bloodType'];
 
         const updateData = {};
         allowedFields.forEach(field => {
             if (req.body[field] !== undefined) {
+                // Skip empty enum fields to avoid validation errors
+                if (enumFields.includes(field) && req.body[field] === '') {
+                    return;
+                }
                 updateData[field] = req.body[field];
             }
         });
+
+        console.log('[Profile Update] User:', req.user._id, 'Fields:', Object.keys(updateData));
 
         const user = await User.findByIdAndUpdate(
             req.user._id,
@@ -167,14 +179,23 @@ router.put('/profile', protect, async (req, res) => {
             { new: true, runValidators: true }
         );
 
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+
         res.json({
             success: true,
-            user
+            user,
+            message: 'Profile updated successfully'
         });
     } catch (error) {
+        console.error('[Profile Update Error]', error);
         res.status(500).json({
             success: false,
-            message: 'Server error updating profile'
+            message: error.message || 'Server error updating profile'
         });
     }
 });

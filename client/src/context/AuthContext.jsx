@@ -64,6 +64,16 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
     };
 
+    // Re-fetch user data from server (call after profile updates)
+    const refreshUser = async () => {
+        try {
+            const response = await authService.getMe();
+            setUser(response.user);
+        } catch (err) {
+            console.error('Failed to refresh user:', err);
+        }
+    };
+
     const value = {
         user,
         loading,
@@ -71,6 +81,7 @@ export const AuthProvider = ({ children }) => {
         login,
         register,
         logout,
+        refreshUser,
         isAuthenticated: !!user
     };
 

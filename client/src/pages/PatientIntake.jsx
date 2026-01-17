@@ -22,6 +22,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
 const PatientIntake = () => {
     const { user, isAuthenticated } = useAuth();
+    const { t } = useLanguage();
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
@@ -35,7 +36,7 @@ const PatientIntake = () => {
         urgency: 'routine'
     });
 
-    const [step, setStep] = useState(1);
+    const [currentStep, setCurrentStep] = useState(1);
     const [showAiSuggestion, setShowAiSuggestion] = useState(false);
     const [aiRecommendations, setAiRecommendations] = useState([]);
     const [aiLoading, setAiLoading] = useState(false);
@@ -121,12 +122,12 @@ const PatientIntake = () => {
         setIsEmergencyMode(hasEmergencySymptom || isUrgent);
     }, [formData.symptoms, formData.urgency]);
 
-    // Show AI suggestion when moving to step 3
+    // Fetch AI recommendation when moving to step 3
     useEffect(() => {
         if (currentStep === 3 && (formData.symptoms.length > 0 || formData.reasonForVisit)) {
-            setShowAiSuggestion(true);
+            fetchAiRecommendation();
         }
-    }, [currentStep, formData.symptoms, formData.reasonForVisit]);
+    }, [currentStep]);
 
     const symptomOptions = [
         'Fever', 'Headache', 'Cough', 'Fatigue', 'Chest Pain',
@@ -204,17 +205,17 @@ const PatientIntake = () => {
                     <div className="progress-steps">
                         <div className={`step ${currentStep >= 1 ? 'active' : ''}`}>
                             <span className="step-num">1</span>
-                            <span className="step-label">Symptoms</span>
+                            <span className="step-label">{t('symptoms')}</span>
                         </div>
                         <div className="step-line"></div>
                         <div className={`step ${currentStep >= 2 ? 'active' : ''}`}>
                             <span className="step-num">2</span>
-                            <span className="step-label">History</span>
+                            <span className="step-label">{t('history')}</span>
                         </div>
                         <div className="step-line"></div>
                         <div className={`step ${currentStep >= 3 ? 'active' : ''}`}>
                             <span className="step-num">3</span>
-                            <span className="step-label">Specialty</span>
+                            <span className="step-label">{t('specialty')}</span>
                         </div>
                     </div>
                 </div>
@@ -239,10 +240,10 @@ const PatientIntake = () => {
                     {/* Step 1: Symptoms */}
                     {currentStep === 1 && (
                         <div className="form-step animate-fadeIn">
-                            <h2>What brings you in today?</h2>
+                            <h2>{t('whatBringsYou')}</h2>
 
                             <div className="form-group">
-                                <label className="form-label">Reason for Visit *</label>
+                                <label className="form-label">{t('reasonForVisit')} *</label>
                                 <textarea
                                     name="reasonForVisit"
                                     className="form-input"
@@ -255,7 +256,7 @@ const PatientIntake = () => {
                             </div>
 
                             <div className="form-group">
-                                <label className="form-label">Select your symptoms (if any)</label>
+                                <label className="form-label">{t('selectSymptoms')}</label>
                                 <div className="symptom-grid">
                                     {symptomOptions.map(symptom => (
                                         <button
@@ -271,14 +272,14 @@ const PatientIntake = () => {
                             </div>
 
                             <div className="form-group">
-                                <label className="form-label">How long have you had these symptoms?</label>
+                                <label className="form-label">{t('howLong')}</label>
                                 <select
                                     name="symptomDuration"
                                     className="form-input"
                                     value={formData.symptomDuration}
                                     onChange={handleChange}
                                 >
-                                    <option value="">Select duration</option>
+                                    <option value="">{t('selectDuration')}</option>
                                     <option value="today">Just today</option>
                                     <option value="few_days">A few days</option>
                                     <option value="week">About a week</option>

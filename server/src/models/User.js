@@ -63,6 +63,34 @@ const userSchema = new mongoose.Schema({
     medicalHistory: {
         type: String
     },
+    // Medical Profile Fields
+    bloodType: {
+        type: String,
+        enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-', ''],
+        default: ''
+    },
+    height: {
+        type: String,
+        default: ''
+    },
+    weight: {
+        type: String,
+        default: ''
+    },
+    emergencyContact: {
+        type: String,
+        default: ''
+    },
+    allergies: [{
+        type: String
+    }],
+    conditions: [{
+        type: String
+    }],
+    address: {
+        type: String,
+        default: ''
+    },
     profileImage: {
         type: String,
         default: ''
@@ -70,6 +98,28 @@ const userSchema = new mongoose.Schema({
     isVerified: {
         type: Boolean,
         default: false
+    },
+    // HIPAA Compliance Fields
+    hipaaConsentGiven: {
+        type: Boolean,
+        default: false
+    },
+    hipaaConsentDate: {
+        type: Date
+    },
+    lastLogin: {
+        type: Date
+    },
+    failedLoginAttempts: {
+        type: Number,
+        default: 0
+    },
+    accountLocked: {
+        type: Boolean,
+        default: false
+    },
+    lockUntil: {
+        type: Date
     },
     createdAt: {
         type: Date,
