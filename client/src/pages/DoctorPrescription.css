@@ -1,0 +1,141 @@
+.prescription-page {
+    padding: var(--space-xl) 0;
+    min-height: calc(100vh - 70px);
+}
+
+.prescription-header {
+    margin-bottom: var(--space-xl);
+}
+
+.prescription-header h1 {
+    font-size: 1.75rem;
+    margin-bottom: var(--space-xs);
+}
+
+.prescription-header p {
+    color: var(--text-secondary);
+}
+
+.prescription-form {
+    background: var(--gradient-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: var(--space-xl);
+    max-width: 800px;
+}
+
+.form-section {
+    margin-bottom: var(--space-xl);
+}
+
+.form-section .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-md);
+}
+
+.form-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: var(--space-sm);
+    color: var(--text-primary);
+}
+
+.form-section textarea,
+.form-section input[type="text"],
+.form-section input[type="number"],
+.form-section select {
+    width: 100%;
+    padding: var(--space-md);
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    transition: border-color var(--transition-fast);
+}
+
+.form-section textarea:focus,
+.form-section input:focus,
+.form-section select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.form-section textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+/* Medication Row */
+.medication-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1.5fr 1fr auto;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-sm);
+    align-items: center;
+}
+
+.medication-row input,
+.medication-row select {
+    padding: var(--space-sm) var(--space-md);
+}
+
+.btn-remove {
+    width: 32px;
+    height: 32px;
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all var(--transition-fast);
+}
+
+.btn-remove:hover {
+    background: #ef4444;
+    color: white;
+}
+
+/* Follow-up Row */
+.follow-up-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.follow-up-row input {
+    width: 80px;
+    text-align: center;
+}
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-md);
+    margin-top: var(--space-xl);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--border);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .medication-row {
+        grid-template-columns: 1fr;
+        gap: var(--space-sm);
+        padding-bottom: var(--space-md);
+        border-bottom: 1px solid var(--border);
+        margin-bottom: var(--space-md);
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .form-actions .btn {
+        width: 100%;
+    }
+}
