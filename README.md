@@ -1,8 +1,14 @@
-# HealthSync 🏥
+# 🏥 HealthSync - AI-Powered Telehealth Platform
 
-**Telehealth Solution for Access to Healthcare from Anywhere**
+[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen)](https://healthsync-app.vercel.app)
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-blue)](https://github.com/himanshu-sharma-dev1/healthsync-app)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-> Veersa Hackathon 2026 | Team HealthSync
+> **Veersa Hackathon 2026** | Making Quality Healthcare Accessible from Anywhere
+
+<p align="center">
+  <img src="client/src/assets/images/healthsync_logo_1768411126010.png" alt="HealthSync Logo" width="200"/>
+</p>
 
 ---
 
@@ -10,27 +16,102 @@
 
 Post pandemic, quick access to quality, affordable and reliable healthcare from anywhere is the need of the hour. People are confined in remote locations and need a digitally enabled solution for instant healthcare access.
 
+**Key Challenges:**
+- Limited access to specialists in rural areas
+- Language and dialect barriers in consultations
+- Lack of digital prescription management
+- Emergency detection during consultations
+- Secure payment and data handling
+
+---
+
 ## 💡 Our Solution
 
-HealthSync is a comprehensive telehealth platform that provides:
+**HealthSync** is a comprehensive AI-powered telehealth platform that bridges the gap between patients and healthcare providers through cutting-edge technology.
 
-- 📹 **Instant Video Consultations** - Similar to in-person experience
-- 💳 **Secure Payments** - Pay before consultation begins
-- 💬 **Real-time Chat** - Communicate during sessions
-- 🎙️ **Transcription** - Overcome dialect/accent challenges
-- 🔒 **Privacy First** - Secure PHI data handling
+### ✨ Key Features
+
+| Feature | Description |
+|---------|-------------|
+| 📹 **HD Video Consultations** | Real-time video calls with screen sharing and chat |
+| 🤖 **AI Emergency Detection** | Automatic detection of 25+ emergency keywords during calls |
+| 📋 **Digital Prescriptions** | Generate and download professional PDF prescriptions |
+| 🎙️ **Live Transcription** | Real-time speech-to-text with DeepGram AI |
+| 🔐 **Google OAuth** | Secure one-click login with Google |
+| 💳 **Secure Payments** | Square API integration for consultations |
+| 📧 **Email Notifications** | SendGrid-powered booking confirmations and reminders |
+| 🔒 **Password Reset** | Secure token-based password recovery |
+| 🌐 **Multi-language** | English & Hindi language support |
+| ♿ **Accessibility** | WCAG compliant with voice commands |
+
+---
+
+## 🏗️ Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        FRONTEND (React + Vite)                   │
+├─────────────────────────────────────────────────────────────────┤
+│  Pages          │  Components       │  Services                  │
+│  ├── Home       │  ├── Navbar       │  ├── aiService.js         │
+│  ├── Dashboard  │  ├── VideoCall    │  ├── pdfGenerator.js      │
+│  ├── Doctors    │  ├── Chat         │  ├── reminderService.js   │
+│  ├── VideoCall  │  ├── Prescription │  └── firebase.js          │
+│  └── Profile    │  └── Transcription│                           │
+└─────────────────┴───────────────────┴───────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                     BACKEND (Node.js + Express)                  │
+├─────────────────────────────────────────────────────────────────┤
+│  Routes              │  Services           │  Middleware         │
+│  ├── auth.js         │  ├── emailService   │  ├── auth.js       │
+│  ├── googleAuth.js   │  └── (SendGrid/SMTP)│  ├── hipaa.js      │
+│  ├── passwordReset.js│                     │  └── rateLimit.js  │
+│  ├── doctors.js      │  Database           │                     │
+│  └── appointments.js │  └── MongoDB Atlas  │                     │
+└──────────────────────┴─────────────────────┴────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      EXTERNAL SERVICES                           │
+├──────────────┬──────────────┬──────────────┬───────────────────┤
+│   Daily.co   │   DeepGram   │   Square     │   SendGrid        │
+│   (Video)    │ (Transcribe) │  (Payments)  │   (Email)         │
+└──────────────┴──────────────┴──────────────┴───────────────────┘
+```
+
+---
 
 ## 🛠️ Tech Stack
 
-| Layer | Technology |
-|-------|------------|
-| Frontend | React + Vite |
-| Backend | Node.js + Express |
-| Database | MongoDB Atlas |
-| Video | Daily.co WebRTC |
-| Payments | Square API |
-| Transcription | DeepGram |
-| Hosting | Vercel + Railway |
+### Frontend
+| Technology | Purpose |
+|------------|---------|
+| React 18 | UI Framework |
+| Vite | Build Tool |
+| React Router | Navigation |
+| jsPDF | PDF Generation |
+| Socket.io Client | Real-time Communication |
+
+### Backend
+| Technology | Purpose |
+|------------|---------|
+| Node.js | Runtime |
+| Express.js | API Framework |
+| MongoDB + Mongoose | Database |
+| JWT | Authentication |
+| SendGrid / Nodemailer | Email Services |
+
+### External APIs
+| Service | Purpose |
+|---------|---------|
+| Daily.co | WebRTC Video Calls |
+| DeepGram | Real-time Transcription |
+| Square | Payment Processing |
+| Google OAuth | Social Login |
+
+---
 
 ## 🚀 Getting Started
 
@@ -38,12 +119,14 @@ HealthSync is a comprehensive telehealth platform that provides:
 - Node.js 18+
 - npm or yarn
 - MongoDB Atlas account
+- API keys for Daily.co, DeepGram, Square, SendGrid
 
 ### Installation
 
 ```bash
 # Clone the repository
 git clone https://github.com/himanshu-sharma-dev1/healthsync-app.git
+cd healthsync-app
 
 # Install frontend dependencies
 cd client && npm install
@@ -51,60 +134,137 @@ cd client && npm install
 # Install backend dependencies
 cd ../server && npm install
 
-# Set up environment variables
+# Configure environment variables
 cp .env.example .env
 # Edit .env with your API keys
 
-# Run development servers
-npm run dev
+# Start development servers
+# Terminal 1 - Backend
+cd server && npm run dev
+
+# Terminal 2 - Frontend
+cd client && npm run dev
 ```
+
+### Environment Variables
+
+```env
+# Server (.env)
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+DAILY_API_KEY=your_daily_api_key
+DEEPGRAM_API_KEY=your_deepgram_key
+SQUARE_ACCESS_TOKEN=your_square_token
+SENDGRID_API_KEY=your_sendgrid_key
+GOOGLE_CLIENT_ID=your_google_oauth_id
+GOOGLE_CLIENT_SECRET=your_google_oauth_secret
+```
+
+---
 
 ## 📁 Project Structure
 
 ```
 healthsync-app/
-├── client/                 # React frontend
+├── client/                     # React Frontend
 │   ├── src/
-│   │   ├── components/     # Reusable UI components
-│   │   ├── pages/          # Page components
-│   │   ├── context/        # React context providers
-│   │   ├── hooks/          # Custom hooks
-│   │   └── services/       # API service functions
-│   └── ...
-├── server/                 # Node.js backend
+│   │   ├── assets/             # Images, icons
+│   │   ├── components/         # Reusable UI components
+│   │   ├── context/            # Auth, Theme, Language contexts
+│   │   ├── hooks/              # Custom React hooks
+│   │   ├── pages/              # Page components
+│   │   │   ├── Dashboard.jsx   # Patient dashboard
+│   │   │   ├── VideoCall.jsx   # Video consultation
+│   │   │   ├── DoctorPrescription.jsx
+│   │   │   ├── ForgotPassword.jsx
+│   │   │   └── ...
+│   │   ├── services/           # API & utility services
+│   │   │   ├── aiService.js    # Emergency detection
+│   │   │   ├── pdfGenerator.js # Prescription PDFs
+│   │   │   └── reminderService.js
+│   │   └── utils/
+│   └── package.json
+│
+├── server/                     # Node.js Backend
 │   ├── src/
-│   │   ├── routes/         # API route handlers
-│   │   ├── models/         # MongoDB schemas
-│   │   ├── controllers/    # Business logic
-│   │   ├── middleware/     # Auth, validation
-│   │   └── config/         # Database, API configs
-│   └── tests/              # API tests
-└── docs/                   # Documentation
-    ├── requirements.md
-    ├── test_cases.md
-    └── DESIGN.md
+│   │   ├── config/             # DB, API configurations
+│   │   ├── middleware/         # Auth, HIPAA, rate limiting
+│   │   ├── models/             # MongoDB schemas
+│   │   ├── routes/             # API endpoints
+│   │   │   ├── auth.js
+│   │   │   ├── googleAuth.js
+│   │   │   ├── passwordReset.js
+│   │   │   └── ...
+│   │   ├── services/           # Email, integrations
+│   │   │   └── emailService.js
+│   │   └── index.js
+│   └── package.json
+│
+└── docs/                       # Documentation
 ```
 
-## 🔗 Links
+---
 
-- **Live Demo**: [Coming Soon]
-- **Information Architecture**: [View Architecture](./docs/INFORMATION_ARCHITECTURE.md)
-- **Figma Designs**: [Coming Soon]
-- **API Documentation**: [Coming Soon]
+## 🎥 Demo Features
+
+### Patient Flow
+1. **Registration/Login** - Email or Google OAuth
+2. **Find Doctors** - Browse by specialty, ratings
+3. **Book Appointment** - Select date/time, pay securely
+4. **Video Consultation** - HD video with live transcription
+5. **Receive Prescription** - Download PDF prescription
+6. **View History** - Past consultations and prescriptions
+
+### Doctor Flow
+1. **Dashboard** - View appointments
+2. **Join Consultation** - Video call with patient
+3. **Write Prescription** - Digital prescription form
+4. **AI Assistance** - Emergency alerts, transcription
+
+### AI Features
+- **Emergency Detection**: Monitors for keywords like "chest pain", "can't breathe", "emergency"
+- **Real-time Transcription**: DeepGram-powered speech-to-text
+- **Consultation Summaries**: AI-generated visit summaries
+
+---
 
 ## 👥 Team HealthSync
 
 | Name | Role | GitHub |
 |------|------|--------|
 | Himanshu Sharma | Full-Stack Lead | [@himanshu-sharma-dev1](https://github.com/himanshu-sharma-dev1) |
-| [Teammate 1] | [Role] | [GitHub] |
-| [Teammate 2] | [Role] | [GitHub] |
-| [Teammate 3] | [Role] | [GitHub] |
-
-## 📝 License
-
-This project is created for Veersa Hackathon 2026.
+| Harsh Kashyap | Backend Developer | [@harsh-kashyap](https://github.com/harsh-kashyap) |
+| Sumit Srivastav | Frontend Developer | [@sumit-srivastav](https://github.com/sumit-srivastav) |
 
 ---
 
-*Built with ❤️ for better healthcare access*
+## 📊 Hackathon Evaluation Criteria
+
+| Criteria | Our Implementation |
+|----------|-------------------|
+| ✅ Innovation | AI emergency detection, real-time transcription |
+| ✅ Functionality | Complete patient-doctor consultation flow |
+| ✅ User Experience | Modern UI, accessibility, multi-language |
+| ✅ Technical Excellence | MERN stack, WebRTC, multiple API integrations |
+| ✅ Scalability | MongoDB Atlas, modular architecture |
+| ✅ Security | JWT auth, HIPAA compliance, secure payments |
+
+---
+
+## 🔗 Links
+
+- **GitHub Repository**: [github.com/himanshu-sharma-dev1/healthsync-app](https://github.com/himanshu-sharma-dev1/healthsync-app)
+- **Live Demo**: [healthsync-app.vercel.app](https://healthsync-app.vercel.app) *(coming soon)*
+
+---
+
+## 📝 License
+
+This project is created for **Veersa Hackathon 2026**.
+
+---
+
+<p align="center">
+  <b>Built with ❤️ for better healthcare access</b><br>
+  <sub>Making quality healthcare accessible from anywhere</sub>
+</p>
