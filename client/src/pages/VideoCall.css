@@ -1,8 +1,117 @@
 .video-call-page {
     display: flex;
+    flex-direction: column;
     height: calc(100vh - 70px);
     background: var(--bg-primary);
     overflow: hidden;
+}
+
+/* Emergency Alert Banner */
+.emergency-alert {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-md) var(--space-lg);
+    animation: pulse-alert 1s ease-in-out infinite;
+}
+
+.emergency-alert.critical {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    border-bottom: 3px solid #fca5a5;
+}
+
+.emergency-alert.moderate {
+    background: linear-gradient(135deg, #d97706, #b45309);
+    border-bottom: 3px solid #fcd34d;
+}
+
+.emergency-content {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.emergency-icon {
+    font-size: 2rem;
+    animation: shake 0.5s ease-in-out infinite;
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-5px);
+    }
+
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+@keyframes pulse-alert {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.9;
+    }
+}
+
+.emergency-text {
+    color: white;
+}
+
+.emergency-text strong {
+    display: block;
+    font-size: 1rem;
+}
+
+.emergency-text p {
+    font-size: 0.85rem;
+    opacity: 0.9;
+    margin-top: 2px;
+}
+
+.emergency-actions {
+    display: flex;
+    gap: var(--space-sm);
+}
+
+.btn-emergency {
+    background: white !important;
+    color: #dc2626 !important;
+    font-weight: 700;
+    padding: var(--space-sm) var(--space-lg);
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+/* Prescription Button */
+.prescription-btn {
+    background: rgba(16, 185, 129, 0.2) !important;
+    border: 1px solid rgba(16, 185, 129, 0.4) !important;
+}
+
+.prescription-btn:hover {
+    background: rgba(16, 185, 129, 0.4) !important;
 }
 
 /* Video Container */
@@ -520,6 +629,47 @@
         opacity: 0.5;
         transform: scale(0.8);
     }
+}
+
+/* Header Actions */
+.transcription-header .header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.translate-toggle {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    color: #818cf8;
+    padding: 6px 12px;
+    border-radius: var(--radius-md);
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.translate-toggle:hover {
+    background: rgba(99, 102, 241, 0.2);
+}
+
+.translate-toggle.active {
+    background: #6366f1;
+    color: white;
+    border-color: #6366f1;
+}
+
+/* Translated Text */
+.entry-text.translated {
+    color: #818cf8;
+    font-style: italic;
+    margin-top: 4px;
+    padding-top: 4px;
+    border-top: 1px dashed rgba(99, 102, 241, 0.3);
 }
 
 .close-transcription {
