@@ -83,6 +83,73 @@
     box-shadow: var(--shadow-glow);
 }
 
+/* Centered Vertical Stat Cards (Smart Traffic Detection Style) */
+.stats-centered .stat-card-vertical {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: var(--space-xl);
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid transparent;
+    border-radius: var(--radius-xl);
+    transition: all var(--transition-base);
+}
+
+.stat-card-vertical.stat-blue {
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+.stat-card-vertical.stat-teal {
+    border-color: rgba(20, 184, 166, 0.3);
+}
+
+.stat-card-vertical.stat-orange {
+    border-color: rgba(249, 115, 22, 0.3);
+}
+
+.stat-card-vertical.stat-green {
+    border-color: rgba(16, 185, 129, 0.3);
+}
+
+.stat-icon-top {
+    font-size: 2rem;
+    margin-bottom: var(--space-md);
+    padding: var(--space-md);
+    background: rgba(14, 165, 233, 0.1);
+    border-radius: 50%;
+}
+
+.stat-number-large {
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin-bottom: var(--space-xs);
+}
+
+.stat-blue .stat-number-large {
+    color: #3b82f6;
+}
+
+.stat-teal .stat-number-large {
+    color: #14b8a6;
+}
+
+.stat-orange .stat-number-large {
+    color: #f97316;
+}
+
+.stat-green .stat-number-large {
+    color: #10b981;
+}
+
+.stat-label-bottom {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
 .stat-icon {
     font-size: 2.5rem;
     padding: var(--space-md);

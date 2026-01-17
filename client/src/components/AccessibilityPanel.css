@@ -14,6 +14,14 @@
     transition: all var(--transition-fast);
 }
 
+/* Hide on video call pages to prevent overlap with chat/transcription */
+.video-call-page~.accessibility-toggle,
+.video-call-page .accessibility-toggle,
+body:has(.video-call-page) .accessibility-toggle {
+    bottom: 80px;
+    right: 80px;
+}
+
 .accessibility-toggle:hover {
     transform: scale(1.1);
     box-shadow: 0 6px 20px rgba(14, 165, 233, 0.5);
@@ -195,9 +203,43 @@
 /* High Contrast Mode */
 :root.high-contrast {
     --text-primary: #ffffff;
-    --text-secondary: #e0e0e0;
+    --text-secondary: #f0f0f0;
+    --text-muted: #d0d0d0;
     --bg-primary: #000000;
-    --bg-secondary: #1a1a1a;
-    --bg-tertiary: #2a2a2a;
+    --bg-secondary: #111111;
+    --bg-tertiary: #222222;
+    --bg-card: rgba(20, 20, 20, 0.95);
     --border: #ffffff;
+    --border-light: #cccccc;
+    --primary: #00bfff;
+    --primary-light: #40d0ff;
+    --success: #00ff7f;
+    --warning: #ffff00;
+    --error: #ff4444;
+}
+
+:root.high-contrast body {
+    filter: contrast(1.2);
+}
+
+:root.high-contrast .btn-primary,
+:root.high-contrast .btn-modern {
+    background: #00bfff;
+    color: #000000;
+    font-weight: 700;
+}
+
+:root.high-contrast .card,
+:root.high-contrast .navbar {
+    border: 2px solid #ffffff;
+}
+
+:root.high-contrast a {
+    color: #00bfff;
+    text-decoration: underline;
+}
+
+:root.high-contrast .form-input {
+    border: 2px solid #ffffff;
+    background: #111111;
 }

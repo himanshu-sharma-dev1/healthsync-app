@@ -12,6 +12,7 @@ import doctorRoutes from './routes/doctors.js';
 import paymentRoutes from './routes/payments.js';
 import videoRoutes from './routes/video.js';
 import transcriptionRoutes, { setupTranscriptionWebSocket } from './routes/transcription.js';
+import aiRoutes from './routes/ai.js';
 
 dotenv.config();
 
@@ -43,6 +44,7 @@ app.use('/api/doctors', doctorRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/video', videoRoutes);
 app.use('/api/transcription', transcriptionRoutes);
+app.use('/api/ai', aiRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -53,7 +55,8 @@ app.get('/api/health', (req, res) => {
       payments: 'Square',
       transcription: 'DeepGram',
       video: 'Daily.co',
-      database: 'MongoDB Atlas'
+      database: 'MongoDB Atlas',
+      ai: process.env.GEMINI_API_KEY ? 'Google Gemini' : 'not configured'
     }
   });
 });
@@ -93,7 +96,7 @@ httpServer.listen(PORT, () => {
   console.log(`🎙️ DeepGram: ${process.env.DEEPGRAM_API_KEY ? 'configured' : 'not configured'}`);
 
   // Setup transcription WebSocket
-  setupTranscriptionWebSocket(httpServer);
+  setupTranscriptionWebSocket(io);
 });
 
 export { io };

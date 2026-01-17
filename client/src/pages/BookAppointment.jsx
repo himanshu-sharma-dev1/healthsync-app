@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { doctorService, appointmentService } from '../services/api';
 import './BookAppointment.css';
@@ -7,6 +7,7 @@ import './BookAppointment.css';
 const BookAppointment = () => {
     const { doctorId } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
     const { user, isAuthenticated } = useAuth();
 
     const [doctor, setDoctor] = useState(null);
@@ -68,18 +69,24 @@ const BookAppointment = () => {
     };
 
     const fetchAvailability = async () => {
+        // Always show demo slots immediately for better UX
+        const demoSlots = ['09:00 AM', '10:00 AM', '11:00 AM', '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM'];
+        setAvailableSlots(demoSlots);
+
         try {
             const response = await doctorService.getAvailability(doctorId, selectedDate);
-            setAvailableSlots(response.timeSlots || []);
+            if (response.timeSlots && response.timeSlots.length > 0) {
+                setAvailableSlots(response.timeSlots);
+            }
         } catch (err) {
-            // Demo available slots
-            setAvailableSlots(['09:00', '10:00', '11:00', '14:00', '15:00', '16:00']);
+            // Keep demo slots on error (already set)
+            console.log('Using demo time slots');
         }
     };
 
     const handleBook = async () => {
         if (!isAuthenticated) {
-            navigate('/login');
+            navigate('/login', { state: { from: location } });
             return;
         }
 
@@ -122,7 +129,7 @@ const BookAppointment = () => {
                     <div className="auth-required">
                         <h2>Login Required</h2>
                         <p>Please login to book an appointment.</p>
-                        <button onClick={() => navigate('/login')} className="btn btn-primary">
+                        <button onClick={() => navigate('/login', { state: { from: location } })} className="btn btn-primary">
                             Login to Continue
                         </button>
                     </div>

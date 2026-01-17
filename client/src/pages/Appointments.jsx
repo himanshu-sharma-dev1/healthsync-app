@@ -129,9 +129,9 @@ const Appointments = () => {
                                         </Link>
                                     )}
                                     {apt.status === 'completed' && (
-                                        <button className="btn btn-secondary btn-sm">
+                                        <Link to={`/summary/${apt.id}`} className="btn btn-secondary btn-sm">
                                             View Details
-                                        </button>
+                                        </Link>
                                     )}
                                 </div>
                             </div>

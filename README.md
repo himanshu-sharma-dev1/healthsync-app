@@ -88,6 +88,7 @@ healthsync-app/
 ## 🔗 Links
 
 - **Live Demo**: [Coming Soon]
+- **Information Architecture**: [View Architecture](./docs/INFORMATION_ARCHITECTURE.md)
 - **Figma Designs**: [Coming Soon]
 - **API Documentation**: [Coming Soon]
 

@@ -9,13 +9,13 @@ import './Dashboard.css';
 import doctorMale from '../assets/images/doctor_avatar_male_1768411093398.png';
 import doctorFemale from '../assets/images/doctor_avatar_female_1768411074828.png';
 
-// Time-based greeting utility
+// Time-based greeting utility - now returns keys instead of text
 const getTimeBasedGreeting = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return { text: 'Good morning', emoji: '🌅' };
-    if (hour < 17) return { text: 'Good afternoon', emoji: '☀️' };
-    if (hour < 21) return { text: 'Good evening', emoji: '🌆' };
-    return { text: 'Good night', emoji: '🌙' };
+    if (hour < 12) return { key: 'goodMorning', emoji: '🌅' };
+    if (hour < 17) return { key: 'goodAfternoon', emoji: '☀️' };
+    if (hour < 21) return { key: 'goodEvening', emoji: '🌆' };
+    return { key: 'goodNight', emoji: '🌙' };
 };
 
 const Dashboard = () => {
@@ -148,6 +148,8 @@ const Dashboard = () => {
         emergencyContact: '+91 98765 43210'
     };
 
+    const greeting = getTimeBasedGreeting();
+
     return (
         <div className="dashboard-page">
             <div className="container">
@@ -155,70 +157,58 @@ const Dashboard = () => {
                 <div className="dashboard-header">
                     <div className="welcome-text">
                         <h1>
-                            <span className="greeting-emoji">{getTimeBasedGreeting().emoji}</span>
-                            {getTimeBasedGreeting().text}, {user?.firstName || 'User'}!
+                            <span className="greeting-emoji">{greeting.emoji}</span>
+                            {t(greeting.key)}, {user?.firstName || 'User'}!
                         </h1>
                         <p className="text-secondary">
                             {user?.role === 'doctor'
-                                ? 'Ready to help patients today'
-                                : "Here's your health overview for today"
+                                ? t('readyToHelp')
+                                : t('healthOverview')
                             }
                         </p>
                     </div>
 
                     <Link to="/intake" className="btn btn-primary btn-cta-pulse">
-                        {user?.role === 'doctor' ? '📋 View Schedule' : `➕ ${t('bookAppointment')}`}
+                        {user?.role === 'doctor' ? `📋 ${t('viewSchedule')}` : `➕ ${t('bookAppointment')}`}
                     </Link>
                 </div>
 
-                {/* Stats Cards */}
-                <div className="stats-grid">
+                {/* Stats Cards - Centered Icon Layout */}
+                <div className="stats-grid stats-centered">
                     {user?.role === 'patient' || !user ? (
                         <>
-                            <div className="stat-card">
-                                <div className="stat-icon">📅</div>
-                                <div className="stat-info">
-                                    <span className="stat-number">{stats.upcomingAppointments}</span>
-                                    <span className="stat-label">Upcoming</span>
-                                </div>
+                            <div className="stat-card stat-card-vertical stat-blue">
+                                <span className="stat-icon-top">📅</span>
+                                <span className="stat-number-large">{stats.upcomingAppointments}</span>
+                                <span className="stat-label-bottom">{t('upcoming')}</span>
                             </div>
-                            <div className="stat-card">
-                                <div className="stat-icon">✅</div>
-                                <div className="stat-info">
-                                    <span className="stat-number">{stats.completedConsultations}</span>
-                                    <span className="stat-label">Completed</span>
-                                </div>
+                            <div className="stat-card stat-card-vertical stat-teal">
+                                <span className="stat-icon-top">✅</span>
+                                <span className="stat-number-large">{stats.completedConsultations}</span>
+                                <span className="stat-label-bottom">{t('completed')}</span>
                             </div>
-                            <div className="stat-card">
-                                <div className="stat-icon">💊</div>
-                                <div className="stat-info">
-                                    <span className="stat-number">{stats.prescriptions}</span>
-                                    <span className="stat-label">Active Rx</span>
-                                </div>
+                            <div className="stat-card stat-card-vertical stat-orange">
+                                <span className="stat-icon-top">💊</span>
+                                <span className="stat-number-large">{stats.prescriptions}</span>
+                                <span className="stat-label-bottom">{t('activeRx')}</span>
                             </div>
                         </>
                     ) : (
                         <>
-                            <div className="stat-card">
-                                <div className="stat-icon">📅</div>
-                                <div className="stat-info">
-                                    <span className="stat-number">{stats.todayAppointments}</span>
-                                    <span className="stat-label">Today's Appointments</span>
-                                </div>
+                            <div className="stat-card stat-card-vertical stat-blue">
+                                <span className="stat-icon-top">📅</span>
+                                <span className="stat-number-large">{stats.todayAppointments}</span>
+                                <span className="stat-label-bottom">{t('todaysAppointments')}</span>
                             </div>
-                            <div className="stat-card">
-                                <div className="stat-icon">👥</div>
-                                <div className="stat-info">
-                                    <span className="stat-number">{stats.totalPatients}</span>
-                                    <span className="stat-label">Total Patients</span>
-                                </div>
+                            <div className="stat-card stat-card-vertical stat-teal">
+                                <span className="stat-icon-top">👥</span>
+                                <span className="stat-number-large">{stats.totalPatients}</span>
+                                <span className="stat-label-bottom">{t('totalPatients')}</span>
                             </div>
-                            <div className="stat-card">
-                                <div className="stat-icon">💰</div>
-                                <div className="stat-info">
-                                    <span className="stat-number">₹{stats.earnings.toLocaleString()}</span>
-                                    <span className="stat-label">This Month</span>
-                                </div>
+                            <div className="stat-card stat-card-vertical stat-green">
+                                <span className="stat-icon-top">💰</span>
+                                <span className="stat-number-large">₹{stats.earnings.toLocaleString()}</span>
+                                <span className="stat-label-bottom">{t('thisMonth')}</span>
                             </div>
                         </>
                     )}
@@ -231,19 +221,19 @@ const Dashboard = () => {
                             className={`tab-btn ${activeTab === 'upcoming' ? 'active' : ''}`}
                             onClick={() => setActiveTab('upcoming')}
                         >
-                            📅 Upcoming
+                            📅 {t('upcoming')}
                         </button>
                         <button
                             className={`tab-btn ${activeTab === 'past' ? 'active' : ''}`}
                             onClick={() => setActiveTab('past')}
                         >
-                            ✅ Past Consultations
+                            ✅ {t('pastConsultations')}
                         </button>
                         <button
                             className={`tab-btn ${activeTab === 'prescriptions' ? 'active' : ''}`}
                             onClick={() => setActiveTab('prescriptions')}
                         >
-                            💊 Prescriptions
+                            💊 {t('prescriptions')}
                         </button>
                     </div>
 
@@ -270,7 +260,7 @@ const Dashboard = () => {
                                             {apt.status}
                                         </span>
                                         <Link to={`/waiting-room/${apt.id}`} className="btn btn-primary btn-sm">
-                                            Join Call
+                                            {t('joinCall')}
                                         </Link>
                                     </div>
                                 </div>
@@ -299,7 +289,7 @@ const Dashboard = () => {
                                     <div className="appointment-actions">
                                         <span className="rating">{'⭐'.repeat(consult.rating)}</span>
                                         <Link to={`/summary/${consult.id}`} className="btn btn-secondary btn-sm">
-                                            View Summary
+                                            {t('viewSummary')}
                                         </Link>
                                     </div>
                                 </div>
@@ -335,38 +325,38 @@ const Dashboard = () => {
                 {/* Medical Profile Card */}
                 <div className="dashboard-section">
                     <div className="section-header">
-                        <h2>📋 Medical Profile</h2>
-                        <button className="btn btn-secondary btn-sm">Edit Profile</button>
+                        <h2>📋 {t('medicalProfile')}</h2>
+                        <button className="btn btn-secondary btn-sm">{t('editProfile')}</button>
                     </div>
 
                     <div className="profile-grid">
                         <div className="profile-item">
-                            <span className="label">Blood Type</span>
+                            <span className="label">{t('bloodType')}</span>
                             <span className="value blood-type">{medicalProfile.bloodType}</span>
                         </div>
                         <div className="profile-item">
-                            <span className="label">Height</span>
+                            <span className="label">{t('height')}</span>
                             <span className="value">{medicalProfile.height}</span>
                         </div>
                         <div className="profile-item">
-                            <span className="label">Weight</span>
+                            <span className="label">{t('weight')}</span>
                             <span className="value">{medicalProfile.weight}</span>
                         </div>
                         <div className="profile-item">
-                            <span className="label">Emergency Contact</span>
+                            <span className="label">{t('emergencyContact')}</span>
                             <span className="value">{medicalProfile.emergencyContact}</span>
                         </div>
                     </div>
 
                     <div className="profile-tags">
                         <div className="tag-group">
-                            <span className="tag-label">⚠️ Allergies:</span>
+                            <span className="tag-label">⚠️ {t('allergies')}:</span>
                             {medicalProfile.allergies.map((allergy, idx) => (
                                 <span key={idx} className="tag allergy">{allergy}</span>
                             ))}
                         </div>
                         <div className="tag-group">
-                            <span className="tag-label">🏥 Conditions:</span>
+                            <span className="tag-label">🏥 {t('conditions')}:</span>
                             {medicalProfile.conditions.map((condition, idx) => (
                                 <span key={idx} className="tag condition">{condition}</span>
                             ))}
@@ -376,23 +366,23 @@ const Dashboard = () => {
 
                 {/* Quick Actions */}
                 <div className="quick-actions">
-                    <h3>Quick Actions</h3>
+                    <h3>{t('quickActions')}</h3>
                     <div className="actions-grid">
                         <Link to="/intake" className="action-card">
                             <span className="action-icon">🏥</span>
-                            <span>New Consultation</span>
+                            <span>{t('newConsultation')}</span>
                         </Link>
                         <Link to="/doctors" className="action-card">
                             <span className="action-icon">🔍</span>
-                            <span>Find Doctor</span>
+                            <span>{t('findDoctor')}</span>
                         </Link>
                         <Link to="/appointments" className="action-card">
                             <span className="action-icon">📋</span>
-                            <span>All Appointments</span>
+                            <span>{t('allAppointments')}</span>
                         </Link>
                         <Link to="#" className="action-card">
                             <span className="action-icon">❓</span>
-                            <span>Help Center</span>
+                            <span>{t('helpCenter')}</span>
                         </Link>
                     </div>
                 </div>

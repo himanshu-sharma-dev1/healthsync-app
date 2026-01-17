@@ -73,9 +73,63 @@
     width: 100%;
 }
 
+/* Return to Call Button - Prominent CTA */
+.return-to-call-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white !important;
+    padding: 8px 16px;
+    border-radius: var(--radius-full);
+    animation: pulse-call 1.5s ease-in-out infinite;
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.return-to-call-btn:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    transform: scale(1.05);
+    text-decoration: none;
+}
+
+@keyframes pulse-call {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+    }
+}
+
 .auth-buttons {
     display: flex;
     gap: var(--space-sm);
+}
+
+/* Login Button - Pill Style */
+.btn-login {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: 8px 16px;
+    background: transparent;
+    border: 1px solid var(--primary);
+    border-radius: var(--radius-full);
+    color: var(--primary);
+    font-weight: 500;
+    font-size: 0.875rem;
+    transition: all var(--transition-fast);
+}
+
+.btn-login:hover {
+    background: var(--primary);
+    color: white;
 }
 
 .user-menu {
@@ -155,6 +209,37 @@
 .user-dropdown button:hover {
     background: var(--bg-tertiary);
     color: var(--text-primary);
+}
+
+/* Dropdown Arrow */
+.dropdown-arrow {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    margin-left: var(--space-xs);
+    transition: transform var(--transition-fast);
+}
+
+.user-menu:hover .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+/* Dropdown Header */
+.dropdown-header {
+    padding: var(--space-sm) var(--space-md);
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-tertiary);
+}
+
+.dropdown-email {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* Dropdown Divider */
+.dropdown-divider {
+    height: 1px;
+    background: var(--border);
+    margin: var(--space-xs) 0;
 }
 
 /* CTA nav link */

@@ -7,12 +7,12 @@ import './VideoCall.css';
 
 // Helper to extract base URL (removes /api suffix if present)
 const getBaseUrl = (apiUrl) => {
-    if (!apiUrl) return 'http://localhost:5000';
+    if (!apiUrl) return 'http://localhost:5001';
     return apiUrl.replace(/\/api\/?$/, '');
 };
 
-const API_URL_ENV = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-const BASE_URL = getBaseUrl(API_URL_ENV);
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+const BASE_URL = getBaseUrl(API_URL);
 const SOCKET_URL = BASE_URL;
 // Replace http/https with ws/wss
 const WS_URL = BASE_URL.replace(/^http/, 'ws');
@@ -83,6 +83,8 @@ const VideoCall = () => {
     const [callDuration, setCallDuration] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [localStream, setLocalStream] = useState(null);
+    const localVideoRef = useRef(null);
 
     // Chat states
     const [socket, setSocket] = useState(null);
@@ -100,6 +102,8 @@ const VideoCall = () => {
     const [isTranscribing, setIsTranscribing] = useState(false);
     const [showTranscription, setShowTranscription] = useState(false);
     const transcriptionWsRef = useRef(null);
+    const mediaRecorderRef = useRef(null);
+    const audioStreamRef = useRef(null);
 
     const videoContainerRef = useRef(null);
     const timerRef = useRef(null);
@@ -116,21 +120,29 @@ const VideoCall = () => {
 
     // Initialize Socket.io connection
     useEffect(() => {
-        const newSocket = io(SOCKET_URL, {
+        // Main socket for chat
+        const mainSocket = io(SOCKET_URL, {
             transports: ['websocket', 'polling']
         });
 
-        newSocket.on('connect', () => {
-            console.log('Socket connected');
-            newSocket.emit('join-room', appointmentId);
+        // Transcription socket (namespace)
+        const transcriptionSocket = io(`${SOCKET_URL}/transcription`, {
+            transports: ['websocket', 'polling']
         });
 
-        newSocket.on('new-message', (message) => {
+        transcriptionWsRef.current = transcriptionSocket;
+
+        mainSocket.on('connect', () => {
+            console.log('Main Socket connected');
+            mainSocket.emit('join-room', appointmentId);
+        });
+
+        mainSocket.on('new-message', (message) => {
             setMessages(prev => [...prev, message]);
         });
 
         // Listen for typing indicator from remote user
-        newSocket.on('user-typing', (data) => {
+        mainSocket.on('user-typing', (data) => {
             if (data.isTyping) {
                 setRemoteIsTyping(true);
                 // Clear typing indicator after 3 seconds
@@ -140,27 +152,63 @@ const VideoCall = () => {
             }
         });
 
-        newSocket.on('disconnect', () => {
-            console.log('Socket disconnected');
+        mainSocket.on('disconnect', () => {
+            console.log('Main Socket disconnected');
         });
 
-        setSocket(newSocket);
+        // Transcription socket events
+        transcriptionSocket.on('connect', () => {
+            console.log('Transcription Socket connected');
+        });
+
+        transcriptionSocket.on('transcription-data', (data) => {
+            setTranscription(prev => [...prev, {
+                speaker: data.speaker || 'Unknown',
+                text: data.text,
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+            }]);
+        });
+
+        setSocket(mainSocket);
 
         return () => {
-            newSocket.close();
+            mainSocket.close();
+            transcriptionSocket.close();
         };
     }, [appointmentId]);
 
     // Initialize Daily.co video call
+    const callObjectRef = useRef(null);
+
     useEffect(() => {
-        initializeCall();
+        let isMounted = true;
+
+        const startCall = async () => {
+            if (callObjectRef.current) return; // Prevent duplicate
+
+            // Store active call in sessionStorage so navbar can show "Return to Call"
+            sessionStorage.setItem('activeVideoCall', JSON.stringify({
+                appointmentId,
+                startTime: Date.now()
+            }));
+
+            await initializeCall();
+        };
+
+        startCall();
+
         return () => {
-            if (callFrame) {
-                callFrame.destroy();
-            }
-            if (timerRef.current) {
-                clearInterval(timerRef.current);
-            }
+            isMounted = false;
+            const cleanup = async () => {
+                if (callObjectRef.current) {
+                    await callObjectRef.current.destroy();
+                    callObjectRef.current = null;
+                }
+                if (timerRef.current) {
+                    clearInterval(timerRef.current);
+                }
+            };
+            cleanup();
         };
     }, []);
 
@@ -168,11 +216,8 @@ const VideoCall = () => {
         try {
             setIsLoading(true);
 
-            // For demo: Create a demo room URL
-            // In production, this would come from your backend
-            const demoRoomUrl = `https://healthsync.daily.co/demo-room-${appointmentId}`;
-
-            // Check if Daily.co is available (it might not work without API key)
+            // Check if Daily.co is available
+            // Note: We use createFrame on the ref to avoid state-based re-renders causing dupes
             const frame = DailyIframe.createFrame(videoContainerRef.current, {
                 showLeaveButton: false,
                 showFullscreenButton: true,
@@ -183,6 +228,8 @@ const VideoCall = () => {
                     borderRadius: '16px'
                 }
             });
+
+            callObjectRef.current = frame; // Store in ref immediately
 
             frame.on('joined-meeting', () => {
                 setIsConnected(true);
@@ -196,11 +243,12 @@ const VideoCall = () => {
 
             frame.on('error', (error) => {
                 console.error('Daily.co error:', error);
-                setError('Video connection failed. Using demo mode.');
+                setError('Demo Mode Active - Camera Preview');
                 setIsLoading(false);
-                // Fall back to demo mode
+                // Enable demo mode with local camera
                 setIsConnected(true);
                 startTimer();
+                startLocalCamera();
             });
 
             // Listen for network quality changes
@@ -210,31 +258,64 @@ const VideoCall = () => {
                     setNetworkQuality(quality === 'low' ? 'poor' : 'good');
                 } else if (quality === 'very-low') {
                     setNetworkQuality('poor');
-                } else {
-                    // Simulate network quality for demo
-                    const rand = Math.random();
-                    setNetworkQuality(rand > 0.7 ? 'good' : rand > 0.3 ? 'fair' : 'poor');
                 }
             });
 
             setCallFrame(frame);
 
-            // In demo mode, simulate connection after 2 seconds
-            // In production, you would call: frame.join({ url: roomUrl })
-            setTimeout(() => {
-                if (!isConnected) {
-                    setIsConnected(true);
-                    setIsLoading(false);
-                    startTimer();
+            // In production, join the real room
+            try {
+                // STEP 1: Create the room first (if not already created)
+                console.log('Creating/ensuring Daily.co room exists...');
+                const createRes = await fetch(`${API_URL}/video/create-room`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({ appointmentId })
+                });
+
+                if (!createRes.ok) {
+                    console.warn('Create room failed, trying to fetch existing room...');
                 }
-            }, 2000);
+
+                // STEP 2: Fetch room details from backend
+                const roomRes = await fetch(`${API_URL}/video/room/${appointmentId}`, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                });
+
+                if (!roomRes.ok) {
+                    const errData = await roomRes.json().catch(() => ({}));
+                    throw new Error(errData.message || 'Failed to get room details');
+                }
+
+                const roomData = await roomRes.json();
+
+                if (roomData.roomUrl) {
+                    console.log('✅ Joining REAL Daily.co room:', roomData.roomUrl);
+                    await frame.join({ url: roomData.roomUrl });
+                } else {
+                    throw new Error('No video room URL provided');
+                }
+            } catch (joinError) {
+                console.error('Join error:', joinError);
+                // Fallback to demo mode with local camera
+                console.log('Enabling demo mode with local camera...');
+                setError('Demo Mode - Real-time video call is simulated');
+                setIsLoading(false);
+                setIsConnected(true);
+                startTimer();
+                startLocalCamera();
+            }
 
         } catch (err) {
             console.error('Failed to initialize call:', err);
-            setError('Failed to initialize video. Using demo mode.');
+            setError('Demo Mode Active - Camera Preview');
             setIsLoading(false);
             setIsConnected(true);
             startTimer();
+            startLocalCamera();
         }
     };
 
@@ -242,6 +323,19 @@ const VideoCall = () => {
         timerRef.current = setInterval(() => {
             setCallDuration(prev => prev + 1);
         }, 1000);
+    };
+
+    // Start local camera for demo mode
+    const startLocalCamera = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+            setLocalStream(stream);
+            if (localVideoRef.current) {
+                localVideoRef.current.srcObject = stream;
+            }
+        } catch (err) {
+            console.log('Camera access denied, using placeholder');
+        }
     };
 
     const formatDuration = (seconds) => {
@@ -254,28 +348,72 @@ const VideoCall = () => {
         if (callFrame) {
             callFrame.setLocalAudio(!isMuted);
         }
+        // Also toggle local stream audio
+        if (localStream) {
+            localStream.getAudioTracks().forEach(track => {
+                track.enabled = isMuted; // Toggle to opposite
+            });
+        }
         setIsMuted(!isMuted);
-    }, [callFrame, isMuted]);
+    }, [callFrame, isMuted, localStream]);
 
-    const toggleVideo = useCallback(() => {
+    const toggleVideo = useCallback(async () => {
         if (callFrame) {
             callFrame.setLocalVideo(!isVideoOff);
         }
+
+        // Handle local stream video toggle
+        if (localStream) {
+            const videoTracks = localStream.getVideoTracks();
+            if (isVideoOff) {
+                // Turning video ON - check if tracks exist and are active
+                if (videoTracks.length === 0 || videoTracks.every(t => t.readyState === 'ended')) {
+                    // Need to re-acquire camera
+                    try {
+                        const newStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                        const newVideoTrack = newStream.getVideoTracks()[0];
+                        if (newVideoTrack && localVideoRef.current) {
+                            localStream.addTrack(newVideoTrack);
+                            localVideoRef.current.srcObject = localStream;
+                        }
+                    } catch (err) {
+                        console.error('Could not re-acquire camera:', err);
+                    }
+                } else {
+                    videoTracks.forEach(track => { track.enabled = true; });
+                }
+            } else {
+                // Turning video OFF - just disable tracks (don't stop them)
+                videoTracks.forEach(track => { track.enabled = false; });
+            }
+        }
+
         setIsVideoOff(!isVideoOff);
-    }, [callFrame, isVideoOff]);
+    }, [callFrame, isVideoOff, localStream]);
 
     const handleEndCall = async () => {
         if (timerRef.current) {
             clearInterval(timerRef.current);
         }
         if (callFrame) {
-            await callFrame.leave();
-            callFrame.destroy();
+            try {
+                await callFrame.leave();
+                callFrame.destroy();
+            } catch (e) {
+                console.log('Call already ended');
+            }
+        }
+        // Stop local stream
+        if (localStream) {
+            localStream.getTracks().forEach(track => track.stop());
         }
         if (socket) {
             socket.close();
         }
-        navigate('/appointments');
+        // Clear active call from sessionStorage
+        sessionStorage.removeItem('activeVideoCall');
+        // Navigate to summary page
+        navigate(`/summary/${appointmentId}`);
     };
 
     const handleSendMessage = (e) => {
@@ -328,13 +466,20 @@ const VideoCall = () => {
                                 <span className="badge badge-success">Connected</span>
                             </div>
                             <div className="local-video-demo">
-                                <div className="placeholder-avatar small">
-                                    {isVideoOff ? (
+                                {localStream && !isVideoOff ? (
+                                    <video
+                                        ref={localVideoRef}
+                                        autoPlay
+                                        muted
+                                        playsInline
+                                        style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '12px', transform: 'scaleX(-1)' }}
+                                    />
+                                ) : (
+                                    <div className="placeholder-avatar small">
                                         <span>{user?.firstName?.[0] || 'Y'}</span>
-                                    ) : (
-                                        <span>🧑</span>
-                                    )}
-                                </div>
+                                    </div>
+                                )}
+                                {isMuted && <div className="muted-indicator">🔇</div>}
                             </div>
                         </div>
                     )}
@@ -395,18 +540,64 @@ const VideoCall = () => {
 
                     <button
                         className={`control-btn ${showTranscription ? 'active' : ''}`}
-                        onClick={() => {
-                            setShowTranscription(!showTranscription);
-                            if (!showTranscription && transcription.length === 0) {
-                                // Add demo transcript for hackathon
-                                setTranscription([
-                                    { speaker: 'Doctor', text: 'Good morning! How are you feeling today?', time: '00:00' },
-                                    { speaker: 'Patient', text: 'I have been experiencing chest pain and shortness of breath for the past few days.', time: '00:05' },
-                                    { speaker: 'Doctor', text: 'I understand. Have you taken any medication like aspirin or ibuprofen for the pain?', time: '00:12' },
-                                    { speaker: 'Patient', text: 'Yes, I took paracetamol 500mg twice daily but it did not help much.', time: '00:20' },
-                                    { speaker: 'Doctor', text: 'Given your symptoms, I recommend we do an ECG. The chest pain could be serious and needs immediate attention.', time: '00:28' }
-                                ]);
-                                setIsTranscribing(true);
+                        onClick={async () => {
+                            const nextState = !showTranscription;
+                            setShowTranscription(nextState);
+
+                            if (nextState) {
+                                // Start real-time transcription with audio capture
+                                try {
+                                    if (transcriptionWsRef.current) {
+                                        // Request microphone access
+                                        const stream = await navigator.mediaDevices.getUserMedia({
+                                            audio: {
+                                                echoCancellation: true,
+                                                noiseSuppression: true,
+                                                sampleRate: 16000
+                                            }
+                                        });
+                                        audioStreamRef.current = stream;
+
+                                        // Emit start-stream to backend to initialize DeepGram
+                                        transcriptionWsRef.current.emit('start-stream');
+
+                                        // Set up MediaRecorder for audio chunks
+                                        const mediaRecorder = new MediaRecorder(stream, {
+                                            mimeType: 'audio/webm;codecs=opus'
+                                        });
+                                        mediaRecorderRef.current = mediaRecorder;
+
+                                        mediaRecorder.ondataavailable = (event) => {
+                                            if (event.data.size > 0 && transcriptionWsRef.current) {
+                                                // Convert blob to ArrayBuffer and send
+                                                event.data.arrayBuffer().then(buffer => {
+                                                    transcriptionWsRef.current.emit('audio-data', buffer);
+                                                });
+                                            }
+                                        };
+
+                                        // Capture audio every 250ms for real-time transcription
+                                        mediaRecorder.start(250);
+                                        setIsTranscribing(true);
+                                        console.log('🎙️ Live transcription started');
+                                    }
+                                } catch (err) {
+                                    console.error('Failed to start transcription:', err);
+                                    setShowTranscription(false);
+                                }
+                            } else {
+                                // Stop transcription
+                                if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+                                    mediaRecorderRef.current.stop();
+                                }
+                                if (audioStreamRef.current) {
+                                    audioStreamRef.current.getTracks().forEach(track => track.stop());
+                                }
+                                if (transcriptionWsRef.current) {
+                                    transcriptionWsRef.current.emit('stop-stream');
+                                }
+                                setIsTranscribing(false);
+                                console.log('🎙️ Live transcription stopped');
                             }
                         }}
                         title="Toggle transcription"

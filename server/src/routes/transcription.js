@@ -151,101 +151,95 @@ router.get('/health', async (req, res) => {
     }
 });
 
-// Export function to setup WebSocket for live transcription
-export function setupTranscriptionWebSocket(server) {
+// Export function to setup WebSocket for live transcription (Socket.io version)
+export function setupTranscriptionWebSocket(io) {
     // Check if API key is configured
     if (!process.env.DEEPGRAM_API_KEY) {
-        console.log('⚠️ DeepGram API key not configured - transcription WebSocket disabled');
+        console.log('⚠️ DeepGram API key not configured - transcription disabled');
         return null;
     }
 
-    const wss = new WebSocketServer({
-        server,
-        path: '/transcribe'
-    });
+    const transcriptionNamespace = io.of('/transcription');
 
-    wss.on('connection', async (ws, req) => {
-        console.log('New transcription WebSocket connection');
-
-        const client = getDeepgramClient();
-        if (!client) {
-            ws.send(JSON.stringify({ type: 'error', message: 'Transcription service not available' }));
-            ws.close();
-            return;
-        }
+    transcriptionNamespace.on('connection', (socket) => {
+        console.log('New transcription socket connected:', socket.id);
 
         let deepgramLive = null;
+        const client = getDeepgramClient();
 
-        try {
-            // Create live transcription connection
-            deepgramLive = client.listen.live({
-                model: 'nova-2-medical',
-                language: 'en-US',
-                smart_format: true,
-                interim_results: true,
-                punctuate: true,
-                endpointing: 300
-            });
-
-            // Handle DeepGram events
-            deepgramLive.on(LiveTranscriptionEvents.Open, () => {
-                console.log('DeepGram connection opened');
-                ws.send(JSON.stringify({ type: 'connected', status: 'ready' }));
-            });
-
-            deepgramLive.on(LiveTranscriptionEvents.Transcript, (data) => {
-                const transcript = data.channel?.alternatives[0]?.transcript;
-                if (transcript) {
-                    ws.send(JSON.stringify({
-                        type: 'transcript',
-                        text: transcript,
-                        isFinal: data.is_final,
-                        confidence: data.channel?.alternatives[0]?.confidence
-                    }));
-                }
-            });
-
-            deepgramLive.on(LiveTranscriptionEvents.Error, (error) => {
-                console.error('DeepGram error:', error);
-                ws.send(JSON.stringify({ type: 'error', message: error.message }));
-            });
-
-            deepgramLive.on(LiveTranscriptionEvents.Close, () => {
-                console.log('DeepGram connection closed');
-            });
-
-        } catch (error) {
-            console.error('Failed to create DeepGram connection:', error);
-            ws.send(JSON.stringify({ type: 'error', message: 'Failed to connect to transcription service' }));
-            ws.close();
+        if (!client) {
+            socket.emit('error', { message: 'Transcription service not available' });
             return;
         }
 
-        // Handle incoming audio data from client
-        ws.on('message', (data) => {
+        // Start DeepGram stream when client requests
+        socket.on('start-stream', () => {
+            try {
+                deepgramLive = client.listen.live({
+                    model: 'nova-2-medical',
+                    language: 'en-US',
+                    smart_format: true,
+                    interim_results: true,
+                    punctuate: true,
+                    endpointing: 300
+                });
+
+                deepgramLive.on(LiveTranscriptionEvents.Open, () => {
+                    console.log('DeepGram connection opened');
+                    socket.emit('status', 'ready');
+                });
+
+                deepgramLive.on(LiveTranscriptionEvents.Transcript, (data) => {
+                    const transcript = data.channel?.alternatives[0]?.transcript;
+                    if (transcript) {
+                        // Send back to this specific socket (and potentially room)
+                        socket.emit('transcription-data', {
+                            text: transcript,
+                            isFinal: data.is_final,
+                            speaker: 'User' // DeepGram doesn't always diarize single stream well, assumes sender
+                        });
+                    }
+                });
+
+                deepgramLive.on(LiveTranscriptionEvents.Error, (error) => {
+                    console.error('DeepGram error:', error);
+                    socket.emit('error', { message: error.message });
+                });
+
+                deepgramLive.on(LiveTranscriptionEvents.Close, () => {
+                    console.log('DeepGram connection closed');
+                });
+
+            } catch (error) {
+                console.error('Failed to create DeepGram connection:', error);
+                socket.emit('error', { message: 'Failed to connect to DeepGram' });
+            }
+        });
+
+        // Receive audio data from client
+        socket.on('audio-data', (data) => {
             if (deepgramLive && deepgramLive.getReadyState() === 1) {
                 deepgramLive.send(data);
             }
         });
 
-        // Handle client disconnect
-        ws.on('close', () => {
-            console.log('Client disconnected from transcription');
+        socket.on('stop-stream', () => {
             if (deepgramLive) {
                 deepgramLive.finish();
+                deepgramLive = null;
             }
         });
 
-        ws.on('error', (error) => {
-            console.error('WebSocket error:', error);
+        socket.on('disconnect', () => {
+            console.log('Client disconnected from transcription');
             if (deepgramLive) {
                 deepgramLive.finish();
+                deepgramLive = null;
             }
         });
     });
 
-    console.log('🎙️ Transcription WebSocket server ready on /transcribe');
-    return wss;
+    console.log('🎙️ Transcription Socket.io namespace ready on /transcription');
 }
 
 export default router;

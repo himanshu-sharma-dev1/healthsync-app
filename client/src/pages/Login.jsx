@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import './Auth.css';
@@ -19,6 +19,7 @@ const Login = () => {
 
     const { login } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -32,7 +33,9 @@ const Login = () => {
 
         try {
             await login(formData.email, formData.password);
-            navigate('/dashboard');
+            // Redirect to origin page if available, otherwise dashboard
+            const from = location.state?.from?.pathname || '/dashboard';
+            navigate(from, { replace: true });
         } catch (err) {
             setError(err.message || 'Invalid email or password');
         } finally {
@@ -57,7 +60,7 @@ const Login = () => {
                         <Link to="/" className="auth-logo">
                             <img src={healthsyncLogo} alt="HealthSync" className="auth-logo-img" />
                         </Link>
-                        <h1>{t('welcomeBack')}</h1>
+                        <h1>👋 {t('welcomeBack')}</h1>
                         <p>{t('signInToAccess')}</p>
                     </div>
 
@@ -69,12 +72,12 @@ const Login = () => {
 
                     <form onSubmit={handleSubmit} className="auth-form">
                         <div className="form-group">
-                            <label className="form-label">Email Address</label>
+                            <label className="form-label">📧 Email</label>
                             <input
                                 type="email"
                                 name="email"
                                 className="form-input"
-                                placeholder="you@example.com"
+                                placeholder="Enter email"
                                 value={formData.email}
                                 onChange={handleChange}
                                 required
@@ -82,27 +85,30 @@ const Login = () => {
                         </div>
 
                         <div className="form-group">
-                            <label className="form-label">Password</label>
+                            <label className="form-label">🔒 Password</label>
                             <input
                                 type="password"
                                 name="password"
                                 className="form-input"
-                                placeholder="••••••••"
+                                placeholder="Enter password"
                                 value={formData.password}
                                 onChange={handleChange}
                                 required
                             />
+                            <div className="forgot-link">
+                                <Link to="#">Forgot Password?</Link>
+                            </div>
                         </div>
 
                         <button type="submit" className="btn btn-primary btn-lg w-full" disabled={loading}>
-                            {loading ? <span className="spinner"></span> : 'Sign In'}
+                            {loading ? <span className="spinner"></span> : '🚀 Sign In'}
                         </button>
                     </form>
 
                     <div className="auth-footer">
                         <p>
                             Don&apos;t have an account?{' '}
-                            <Link to="/register">Create one</Link>
+                            <Link to="/register">Sign Up</Link>
                         </p>
                     </div>
 

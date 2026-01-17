@@ -1,29 +1,25 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { paymentService, appointmentService } from '../services/api';
+import { appointmentService } from '../services/api';
 import './Payment.css';
 
 // Import images
 import doctorFemale from '../assets/images/doctor_avatar_female_1768411074828.png';
 import paymentSecure from '../assets/images/payment_secure_1768411142589.png';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+
 const Payment = () => {
     const { appointmentId } = useParams();
     const navigate = useNavigate();
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, user } = useAuth();
 
     const [appointment, setAppointment] = useState(null);
     const [loading, setLoading] = useState(true);
     const [processing, setProcessing] = useState(false);
-    const [paymentMethod, setPaymentMethod] = useState('card');
-    const [cardDetails, setCardDetails] = useState({
-        cardNumber: '',
-        expiry: '',
-        cvv: '',
-        name: ''
-    });
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
 
     useEffect(() => {
         fetchAppointment();
@@ -53,62 +49,79 @@ const Payment = () => {
         }
     };
 
-    const handleCardChange = (e) => {
-        let { name, value } = e.target;
-
-        // Format card number with spaces
-        if (name === 'cardNumber') {
-            value = value.replace(/\D/g, '').slice(0, 16);
-            value = value.replace(/(\d{4})/g, '$1 ').trim();
-        }
-
-        // Format expiry as MM/YY
-        if (name === 'expiry') {
-            value = value.replace(/\D/g, '').slice(0, 4);
-            if (value.length > 2) {
-                value = value.slice(0, 2) + '/' + value.slice(2);
-            }
-        }
-
-        // Limit CVV to 3-4 digits
-        if (name === 'cvv') {
-            value = value.replace(/\D/g, '').slice(0, 4);
-        }
-
-        setCardDetails({ ...cardDetails, [name]: value });
-    };
-
-    const handlePayment = async (e) => {
-        e.preventDefault();
-
-        if (paymentMethod === 'card') {
-            if (!cardDetails.cardNumber || !cardDetails.expiry || !cardDetails.cvv || !cardDetails.name) {
-                setError('Please fill in all card details');
-                return;
-            }
-        }
-
+    // REAL Square Checkout - Redirects to Square's hosted payment page
+    const handleSquareCheckout = async () => {
         setProcessing(true);
         setError('');
 
         try {
-            // Simulate payment processing
-            await new Promise(resolve => setTimeout(resolve, 2000));
-
-            // Call payment API
-            await paymentService.create({
-                appointmentId,
-                amount: appointment?.doctor?.consultationFee || 800,
-                method: paymentMethod
+            const response = await fetch(`${API_URL}/payments/create-checkout`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({
+                    appointmentId,
+                    doctorName: `${appointment?.doctor?.firstName} ${appointment?.doctor?.lastName}`,
+                    specialty: appointment?.doctor?.specialty,
+                    amount: appointment?.doctor?.consultationFee || 800,
+                    patientEmail: user?.email,
+                    appointmentDate: appointment?.scheduledDate,
+                    appointmentTime: appointment?.scheduledTime
+                })
             });
 
-            // Navigate to waiting room
-            navigate(`/waiting-room/${appointmentId}`);
+            const data = await response.json();
+
+            if (data.success && data.checkoutUrl) {
+                setSuccess('Redirecting to Square payment page...');
+                console.log('✅ Square checkout URL:', data.checkoutUrl);
+
+                // Redirect to Square's hosted checkout page
+                window.location.href = data.checkoutUrl;
+            } else if (data.redirectUrl) {
+                // Demo fallback
+                navigate(data.redirectUrl);
+            } else {
+                setError(data.error || 'Failed to create checkout session');
+            }
         } catch (err) {
-            // For demo, navigate anyway after showing success
-            setTimeout(() => {
-                navigate(`/waiting-room/${appointmentId}`);
-            }, 1000);
+            console.error('Checkout error:', err);
+            setError('Failed to connect to payment service. Please try again.');
+        } finally {
+            setProcessing(false);
+        }
+    };
+
+    // Demo Skip - For testing only
+    const handleDemoSkip = async () => {
+        setProcessing(true);
+        try {
+            // Call demo payment endpoint
+            const response = await fetch(`${API_URL}/payments/create`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({
+                    appointmentId,
+                    amount: appointment?.doctor?.consultationFee || 800,
+                    demoMode: true
+                })
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                setSuccess('Demo payment successful! Redirecting...');
+                setTimeout(() => {
+                    navigate(`/waiting-room/${appointmentId}`);
+                }, 1000);
+            }
+        } catch (err) {
+            // Still proceed for demo
+            navigate(`/waiting-room/${appointmentId}`);
         } finally {
             setProcessing(false);
         }
@@ -199,171 +212,90 @@ const Payment = () => {
                             <img src={paymentSecure} alt="Secure Payment" className="secure-badge-img" />
                             <div>
                                 <span className="secure-title">🔒 Secure Payment</span>
-                                <span className="secure-text">Protected by 256-bit SSL encryption</span>
+                                <span className="secure-text">Powered by Square • PCI DSS Compliant</span>
                             </div>
                         </div>
                     </div>
 
-                    {/* Payment Form */}
+                    {/* Payment Options */}
                     <div className="payment-form-container">
-                        <h2>Payment Method</h2>
+                        <h2>Complete Payment</h2>
 
                         {error && (
                             <div className="alert alert-error">{error}</div>
                         )}
 
-                        {/* Payment Method Selection */}
-                        <div className="payment-methods">
-                            <label className={`method-option ${paymentMethod === 'card' ? 'selected' : ''}`}>
-                                <input
-                                    type="radio"
-                                    name="paymentMethod"
-                                    value="card"
-                                    checked={paymentMethod === 'card'}
-                                    onChange={(e) => setPaymentMethod(e.target.value)}
-                                />
-                                <span className="method-icon">💳</span>
-                                <span>Credit/Debit Card</span>
-                            </label>
-
-                            <label className={`method-option ${paymentMethod === 'upi' ? 'selected' : ''}`}>
-                                <input
-                                    type="radio"
-                                    name="paymentMethod"
-                                    value="upi"
-                                    checked={paymentMethod === 'upi'}
-                                    onChange={(e) => setPaymentMethod(e.target.value)}
-                                />
-                                <span className="method-icon">📱</span>
-                                <span>UPI</span>
-                            </label>
-
-                            <label className={`method-option ${paymentMethod === 'netbanking' ? 'selected' : ''}`}>
-                                <input
-                                    type="radio"
-                                    name="paymentMethod"
-                                    value="netbanking"
-                                    checked={paymentMethod === 'netbanking'}
-                                    onChange={(e) => setPaymentMethod(e.target.value)}
-                                />
-                                <span className="method-icon">🏦</span>
-                                <span>Net Banking</span>
-                            </label>
-                        </div>
-
-                        {/* Card Details Form */}
-                        {paymentMethod === 'card' && (
-                            <form onSubmit={handlePayment} className="card-form animate-fadeIn">
-                                <div className="form-group">
-                                    <label className="form-label">Cardholder Name</label>
-                                    <input
-                                        type="text"
-                                        name="name"
-                                        className="form-input"
-                                        placeholder="John Doe"
-                                        value={cardDetails.name}
-                                        onChange={handleCardChange}
-                                        required
-                                    />
-                                </div>
-
-                                <div className="form-group">
-                                    <label className="form-label">Card Number</label>
-                                    <input
-                                        type="text"
-                                        name="cardNumber"
-                                        className="form-input"
-                                        placeholder="4242 4242 4242 4242"
-                                        value={cardDetails.cardNumber}
-                                        onChange={handleCardChange}
-                                        required
-                                    />
-                                </div>
-
-                                <div className="form-row">
-                                    <div className="form-group">
-                                        <label className="form-label">Expiry Date</label>
-                                        <input
-                                            type="text"
-                                            name="expiry"
-                                            className="form-input"
-                                            placeholder="MM/YY"
-                                            value={cardDetails.expiry}
-                                            onChange={handleCardChange}
-                                            required
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label className="form-label">CVV</label>
-                                        <input
-                                            type="text"
-                                            name="cvv"
-                                            className="form-input"
-                                            placeholder="123"
-                                            value={cardDetails.cvv}
-                                            onChange={handleCardChange}
-                                            required
-                                        />
-                                    </div>
-                                </div>
-
-                                <button
-                                    type="submit"
-                                    className="btn btn-primary btn-lg w-full pay-btn"
-                                    disabled={processing}
-                                >
-                                    {processing ? (
-                                        <>
-                                            <span className="spinner"></span>
-                                            Processing...
-                                        </>
-                                    ) : (
-                                        `Pay ₹${appointment?.doctor?.consultationFee}`
-                                    )}
-                                </button>
-                            </form>
+                        {success && (
+                            <div className="alert alert-success">{success}</div>
                         )}
 
-                        {/* UPI Form */}
-                        {paymentMethod === 'upi' && (
-                            <form onSubmit={handlePayment} className="upi-form animate-fadeIn">
-                                <div className="form-group">
-                                    <label className="form-label">UPI ID</label>
-                                    <input
-                                        type="text"
-                                        className="form-input"
-                                        placeholder="yourname@upi"
-                                        required
-                                    />
-                                </div>
-                                <button
-                                    type="submit"
-                                    className="btn btn-primary btn-lg w-full pay-btn"
-                                    disabled={processing}
-                                >
-                                    {processing ? 'Processing...' : `Pay ₹${appointment?.doctor?.consultationFee}`}
-                                </button>
-                            </form>
-                        )}
-
-                        {/* Net Banking */}
-                        {paymentMethod === 'netbanking' && (
-                            <div className="netbanking-form animate-fadeIn">
-                                <p className="text-secondary mb-md">Select your bank:</p>
-                                <div className="bank-grid">
-                                    {['SBI', 'HDFC', 'ICICI', 'Axis', 'Kotak', 'Other'].map(bank => (
-                                        <button key={bank} className="bank-option" onClick={handlePayment}>
-                                            {bank}
-                                        </button>
-                                    ))}
+                        {/* Real Square Payment */}
+                        <div className="payment-option primary animate-fadeIn">
+                            <div className="option-header">
+                                <span className="option-icon">💳</span>
+                                <div>
+                                    <h3>Pay with Square</h3>
+                                    <p>Secure card payment via Square's checkout</p>
                                 </div>
                             </div>
-                        )}
 
-                        {/* Demo Notice */}
-                        <div className="demo-notice">
-                            <p><strong>Demo Mode:</strong> Use any test card details to proceed.</p>
-                            <p>Test Card: 4242 4242 4242 4242</p>
+                            <button
+                                className="btn btn-primary btn-lg w-full pay-btn"
+                                onClick={handleSquareCheckout}
+                                disabled={processing}
+                            >
+                                {processing ? (
+                                    <>
+                                        <span className="spinner-small"></span>
+                                        Processing...
+                                    </>
+                                ) : (
+                                    <>
+                                        <span>💳</span>
+                                        Pay ₹{appointment?.doctor?.consultationFee} Securely
+                                    </>
+                                )}
+                            </button>
+
+                            <div className="payment-features">
+                                <span>✓ Credit/Debit Cards</span>
+                                <span>✓ Apple Pay</span>
+                                <span>✓ Google Pay</span>
+                            </div>
+                        </div>
+
+                        <div className="divider">
+                            <span>or</span>
+                        </div>
+
+                        {/* Demo Mode for Testing */}
+                        <div className="payment-option secondary">
+                            <div className="option-header">
+                                <span className="option-icon">🎭</span>
+                                <div>
+                                    <h3>Demo Mode</h3>
+                                    <p>Skip payment for testing (hackathon demo only)</p>
+                                </div>
+                            </div>
+
+                            <button
+                                className="btn btn-secondary btn-lg w-full"
+                                onClick={handleDemoSkip}
+                                disabled={processing}
+                            >
+                                Skip to Consultation
+                            </button>
+                        </div>
+
+                        {/* Test Card Info */}
+                        <div className="test-card-info">
+                            <h4>🧪 Sandbox Test Cards</h4>
+                            <p>Use these on Square's checkout page:</p>
+                            <ul>
+                                <li><strong>Visa:</strong> 4532 0151 1283 0366</li>
+                                <li><strong>Mastercard:</strong> 5425 2334 3010 9903</li>
+                                <li>CVV: Any 3 digits | Expiry: Any future date</li>
+                            </ul>
                         </div>
                     </div>
                 </div>

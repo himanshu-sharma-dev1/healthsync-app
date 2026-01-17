@@ -274,6 +274,106 @@
     border-radius: var(--radius-xl);
 }
 
+/* Payment Options */
+.payment-option {
+    padding: var(--space-xl);
+    border-radius: var(--radius-xl);
+    margin-bottom: var(--space-lg);
+}
+
+.payment-option.primary {
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(59, 130, 246, 0.1));
+    border: 2px solid var(--primary);
+}
+
+.payment-option.secondary {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+}
+
+.option-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+}
+
+.option-icon {
+    font-size: 2rem;
+}
+
+.option-header h3 {
+    font-size: 1.125rem;
+    margin-bottom: 4px;
+}
+
+.option-header p {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.payment-features {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-lg);
+    margin-top: var(--space-md);
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin: var(--space-lg) 0;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+}
+
+.divider span {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+}
+
+.test-card-info {
+    margin-top: var(--space-xl);
+    padding: var(--space-lg);
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: var(--radius-lg);
+}
+
+.test-card-info h4 {
+    font-size: 0.875rem;
+    margin-bottom: var(--space-sm);
+    color: var(--info);
+}
+
+.test-card-info p {
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-sm);
+}
+
+.test-card-info ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.test-card-info li {
+    font-size: 0.8125rem;
+    padding: 4px 0;
+    font-family: monospace;
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
     .payment-layout {
@@ -292,5 +392,11 @@
 
     .bank-grid {
         grid-template-columns: repeat(2, 1fr);
+    }
+
+    .payment-features {
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-sm);
     }
 }

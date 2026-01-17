@@ -4,69 +4,21 @@ import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import './PatientIntake.css';
 
-// AI Specialty Matching - Symptom to Specialty Mapping
+// Symptom to specialty mapping (fallback only)
 const SYMPTOM_SPECIALTY_MAP = {
-    'Chest Pain': { specialty: 'Cardiologist', weight: 0.9 },
-    'Shortness of Breath': { specialty: 'Cardiologist', weight: 0.8 },
-    'Skin Rash': { specialty: 'Dermatologist', weight: 0.95 },
-    'Joint Pain': { specialty: 'Orthopedic', weight: 0.85 },
-    'Back Pain': { specialty: 'Orthopedic', weight: 0.8 },
-    'Anxiety': { specialty: 'Psychiatrist', weight: 0.9 },
-    'Depression': { specialty: 'Psychiatrist', weight: 0.95 },
-    'Fever': { specialty: 'General Physician', weight: 0.7 },
     'Headache': { specialty: 'General Physician', weight: 0.6 },
-    'Cough': { specialty: 'General Physician', weight: 0.65 },
-    'Fatigue': { specialty: 'General Physician', weight: 0.5 },
+    'Fever': { specialty: 'General Physician', weight: 0.8 },
+    'Chest Pain': { specialty: 'Cardiologist', weight: 0.95 },
+    'Skin Issues': { specialty: 'Dermatologist', weight: 0.9 },
+    'Joint Pain': { specialty: 'Orthopedic', weight: 0.85 },
+    'Anxiety': { specialty: 'Psychiatrist', weight: 0.85 },
+    'Cough': { specialty: 'General Physician', weight: 0.7 },
     'Stomach Pain': { specialty: 'General Physician', weight: 0.7 },
     'Nausea': { specialty: 'General Physician', weight: 0.6 },
     'Other': { specialty: 'General Physician', weight: 0.4 }
 };
 
-// AI function to calculate specialty recommendations
-const calculateSpecialtyRecommendations = (symptoms, reasonText) => {
-    const scores = {};
-
-    // Initialize all specialties with base score
-    const allSpecialties = ['General Physician', 'Cardiologist', 'Dermatologist', 'Orthopedic', 'Pediatrician', 'Psychiatrist'];
-    allSpecialties.forEach(spec => scores[spec] = 0.1);
-
-    // Calculate scores based on selected symptoms
-    symptoms.forEach(symptom => {
-        const mapping = SYMPTOM_SPECIALTY_MAP[symptom];
-        if (mapping) {
-            scores[mapping.specialty] = Math.max(scores[mapping.specialty], mapping.weight);
-        }
-    });
-
-    // Boost scores based on keywords in reason text
-    const reasonLower = reasonText.toLowerCase();
-    if (reasonLower.includes('heart') || reasonLower.includes('chest') || reasonLower.includes('palpitation')) {
-        scores['Cardiologist'] = Math.max(scores['Cardiologist'], 0.85);
-    }
-    if (reasonLower.includes('skin') || reasonLower.includes('acne') || reasonLower.includes('rash') || reasonLower.includes('itch')) {
-        scores['Dermatologist'] = Math.max(scores['Dermatologist'], 0.85);
-    }
-    if (reasonLower.includes('bone') || reasonLower.includes('joint') || reasonLower.includes('fracture') || reasonLower.includes('sprain')) {
-        scores['Orthopedic'] = Math.max(scores['Orthopedic'], 0.85);
-    }
-    if (reasonLower.includes('stress') || reasonLower.includes('anxious') || reasonLower.includes('depressed') || reasonLower.includes('mental')) {
-        scores['Psychiatrist'] = Math.max(scores['Psychiatrist'], 0.85);
-    }
-    if (reasonLower.includes('child') || reasonLower.includes('baby') || reasonLower.includes('infant') || reasonLower.includes('kid')) {
-        scores['Pediatrician'] = Math.max(scores['Pediatrician'], 0.9);
-    }
-
-    // Convert to array and sort by score
-    const recommendations = Object.entries(scores)
-        .map(([specialty, confidence]) => ({
-            specialty,
-            confidence: Math.round(confidence * 100),
-            isRecommended: confidence >= 0.6
-        }))
-        .sort((a, b) => b.confidence - a.confidence);
-
-    return recommendations;
-};
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
 const PatientIntake = () => {
     const { user, isAuthenticated } = useAuth();
@@ -78,15 +30,89 @@ const PatientIntake = () => {
         symptomDuration: '',
         allergies: '',
         currentMedications: '',
+        medicalHistory: '',
         preferredSpecialty: '',
         urgency: 'routine'
     });
-    const [currentStep, setCurrentStep] = useState(1);
+
+    const [step, setStep] = useState(1);
     const [showAiSuggestion, setShowAiSuggestion] = useState(false);
+    const [aiRecommendations, setAiRecommendations] = useState([]);
+    const [aiLoading, setAiLoading] = useState(false);
+    const [aiError, setAiError] = useState('');
     const [isEmergencyMode, setIsEmergencyMode] = useState(false);
 
     // Emergency symptoms that trigger emergency mode
     const emergencySymptoms = ['Chest Pain', 'Shortness of Breath'];
+
+    // Fetch AI recommendations when symptoms or reason changes
+    const fetchAiRecommendation = async () => {
+        if (!formData.symptoms.length && !formData.reasonForVisit) {
+            return;
+        }
+
+        setAiLoading(true);
+        setAiError('');
+
+        try {
+            const response = await fetch(`${API_URL}/ai/recommend-doctor`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    symptoms: formData.symptoms,
+                    reasonForVisit: formData.reasonForVisit,
+                    patientAge: user?.age,
+                    patientGender: user?.gender
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success && data.recommendations) {
+                setAiRecommendations(data.recommendations);
+                setShowAiSuggestion(true);
+                console.log('🤖 AI Recommendation:', data.recommendations[0]?.specialty, data.poweredBy);
+            }
+        } catch (err) {
+            console.error('AI recommendation error:', err);
+            setAiError('AI recommendation unavailable');
+            // Fallback to basic logic
+            const fallbackRec = getFallbackRecommendation(formData.symptoms, formData.reasonForVisit);
+            setAiRecommendations(fallbackRec);
+            setShowAiSuggestion(true);
+        } finally {
+            setAiLoading(false);
+        }
+    };
+
+    // Fallback recommendation (same as before)
+    const getFallbackRecommendation = (symptoms, reasonText) => {
+        const scores = {};
+        const allSpecialties = ['General Physician', 'Cardiologist', 'Dermatologist', 'Orthopedic', 'Pediatrician', 'Psychiatrist'];
+        allSpecialties.forEach(spec => scores[spec] = 10);
+
+        symptoms.forEach(symptom => {
+            const mapping = SYMPTOM_SPECIALTY_MAP[symptom];
+            if (mapping) {
+                scores[mapping.specialty] = Math.max(scores[mapping.specialty], mapping.weight * 100);
+            }
+        });
+
+        const reasonLower = (reasonText || '').toLowerCase();
+        if (reasonLower.includes('heart') || reasonLower.includes('chest')) scores['Cardiologist'] = 90;
+        if (reasonLower.includes('skin') || reasonLower.includes('rash')) scores['Dermatologist'] = 90;
+        if (reasonLower.includes('bone') || reasonLower.includes('joint')) scores['Orthopedic'] = 90;
+        if (reasonLower.includes('stress') || reasonLower.includes('anxiety')) scores['Psychiatrist'] = 90;
+
+        return Object.entries(scores)
+            .map(([specialty, confidence]) => ({ specialty, confidence: Math.round(confidence), reason: 'Based on your symptoms' }))
+            .sort((a, b) => b.confidence - a.confidence)
+            .slice(0, 3);
+    };
+
+    const topRecommendation = aiRecommendations[0];
 
     // Detect emergency mode based on urgency and symptoms
     useEffect(() => {
@@ -94,13 +120,6 @@ const PatientIntake = () => {
         const isUrgent = formData.urgency === 'urgent' || formData.urgency === 'emergency';
         setIsEmergencyMode(hasEmergencySymptom || isUrgent);
     }, [formData.symptoms, formData.urgency]);
-
-    // AI-powered specialty recommendations
-    const aiRecommendations = useMemo(() => {
-        return calculateSpecialtyRecommendations(formData.symptoms, formData.reasonForVisit);
-    }, [formData.symptoms, formData.reasonForVisit]);
-
-    const topRecommendation = aiRecommendations[0];
 
     // Show AI suggestion when moving to step 3
     useEffect(() => {

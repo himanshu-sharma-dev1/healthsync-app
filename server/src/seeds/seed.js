@@ -28,7 +28,7 @@ const userSchema = new mongoose.Schema({
 const User = mongoose.models.User || mongoose.model('User', userSchema);
 
 // Demo Doctors Data
-const demoUserss = [
+const demoUsers = [
     // Demo Patients
     {
         firstName: 'Demo',
@@ -51,9 +51,13 @@ const demoUserss = [
         consultationFee: 800,
         bio: 'Experienced cardiologist specializing in preventive cardiology and heart disease management.',
         availability: [
-            { day: 'Monday', slots: ['09:00', '10:00', '11:00', '14:00', '15:00'] },
-            { day: 'Wednesday', slots: ['09:00', '10:00', '11:00', '14:00', '15:00'] },
-            { day: 'Friday', slots: ['09:00', '10:00', '11:00'] }
+            { day: 'Monday', slots: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'] },
+            { day: 'Tuesday', slots: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'] },
+            { day: 'Wednesday', slots: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'] },
+            { day: 'Thursday', slots: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'] },
+            { day: 'Friday', slots: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'] },
+            { day: 'Saturday', slots: ['10:00', '11:00', '12:00'] },
+            { day: 'Sunday', slots: ['10:00', '11:00', '12:00'] }
         ],
         isVerified: true
     },
@@ -69,9 +73,13 @@ const demoUserss = [
         consultationFee: 500,
         bio: 'General physician with expertise in family medicine and preventive healthcare.',
         availability: [
-            { day: 'Monday', slots: ['10:00', '11:00', '12:00', '16:00', '17:00'] },
-            { day: 'Tuesday', slots: ['10:00', '11:00', '12:00', '16:00', '17:00'] },
-            { day: 'Thursday', slots: ['10:00', '11:00', '12:00', '16:00', '17:00'] }
+            { day: 'Monday', slots: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'] },
+            { day: 'Tuesday', slots: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'] },
+            { day: 'Wednesday', slots: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'] },
+            { day: 'Thursday', slots: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'] },
+            { day: 'Friday', slots: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'] },
+            { day: 'Saturday', slots: ['10:00', '11:00', '12:00'] },
+            { day: 'Sunday', slots: ['10:00', '11:00', '12:00'] }
         ],
         isVerified: true
     },
@@ -87,9 +95,13 @@ const demoUserss = [
         consultationFee: 600,
         bio: 'Dermatologist specializing in skin conditions, cosmetic dermatology, and hair disorders.',
         availability: [
-            { day: 'Tuesday', slots: ['09:00', '10:00', '11:00', '14:00'] },
-            { day: 'Thursday', slots: ['09:00', '10:00', '11:00', '14:00'] },
-            { day: 'Saturday', slots: ['09:00', '10:00', '11:00'] }
+            { day: 'Monday', slots: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'] },
+            { day: 'Tuesday', slots: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'] },
+            { day: 'Wednesday', slots: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'] },
+            { day: 'Thursday', slots: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'] },
+            { day: 'Friday', slots: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'] },
+            { day: 'Saturday', slots: ['10:00', '11:00', '12:00'] },
+            { day: 'Sunday', slots: ['10:00', '11:00', '12:00'] }
         ],
         isVerified: true
     },
@@ -105,9 +117,13 @@ const demoUserss = [
         consultationFee: 900,
         bio: 'Orthopedic surgeon with expertise in joint replacement and sports medicine.',
         availability: [
-            { day: 'Monday', slots: ['14:00', '15:00', '16:00', '17:00'] },
-            { day: 'Wednesday', slots: ['14:00', '15:00', '16:00', '17:00'] },
-            { day: 'Friday', slots: ['14:00', '15:00', '16:00', '17:00'] }
+            { day: 'Monday', slots: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'] },
+            { day: 'Tuesday', slots: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'] },
+            { day: 'Wednesday', slots: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'] },
+            { day: 'Thursday', slots: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'] },
+            { day: 'Friday', slots: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'] },
+            { day: 'Saturday', slots: ['10:00', '11:00', '12:00'] },
+            { day: 'Sunday', slots: ['10:00', '11:00', '12:00'] }
         ],
         isVerified: true
     },
@@ -123,11 +139,13 @@ const demoUserss = [
         consultationFee: 550,
         bio: 'Pediatrician dedicated to child healthcare, vaccinations, and developmental assessments.',
         availability: [
-            { day: 'Monday', slots: ['09:00', '10:00', '11:00', '12:00'] },
-            { day: 'Tuesday', slots: ['09:00', '10:00', '11:00', '12:00'] },
-            { day: 'Wednesday', slots: ['09:00', '10:00', '11:00', '12:00'] },
-            { day: 'Thursday', slots: ['09:00', '10:00', '11:00', '12:00'] },
-            { day: 'Friday', slots: ['09:00', '10:00', '11:00', '12:00'] }
+            { day: 'Monday', slots: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'] },
+            { day: 'Tuesday', slots: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'] },
+            { day: 'Wednesday', slots: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'] },
+            { day: 'Thursday', slots: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'] },
+            { day: 'Friday', slots: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'] },
+            { day: 'Saturday', slots: ['10:00', '11:00', '12:00'] },
+            { day: 'Sunday', slots: ['10:00', '11:00', '12:00'] }
         ],
         isVerified: true
     },
@@ -143,9 +161,13 @@ const demoUserss = [
         consultationFee: 1000,
         bio: 'Psychiatrist specializing in anxiety, depression, and stress management.',
         availability: [
-            { day: 'Tuesday', slots: ['14:00', '15:00', '16:00', '17:00', '18:00'] },
-            { day: 'Thursday', slots: ['14:00', '15:00', '16:00', '17:00', '18:00'] },
-            { day: 'Saturday', slots: ['10:00', '11:00', '12:00'] }
+            { day: 'Monday', slots: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'] },
+            { day: 'Tuesday', slots: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'] },
+            { day: 'Wednesday', slots: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'] },
+            { day: 'Thursday', slots: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'] },
+            { day: 'Friday', slots: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'] },
+            { day: 'Saturday', slots: ['10:00', '11:00', '12:00'] },
+            { day: 'Sunday', slots: ['10:00', '11:00', '12:00'] }
         ],
         isVerified: true
     }
@@ -165,7 +187,7 @@ const seedDatabase = async () => {
 
         // Hash passwords and insert users
         console.log('👤 Creating demo users and doctors...');
-        for (const userData of demoUserss) {
+        for (const userData of demoUsers) {
             const salt = await bcrypt.genSalt(10);
             const hashedPassword = await bcrypt.hash(userData.password, salt);
 

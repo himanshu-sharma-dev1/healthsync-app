@@ -3,6 +3,8 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './ConsultationSummary.css';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+
 const ConsultationSummary = () => {
     const { appointmentId } = useParams();
     const navigate = useNavigate();
@@ -14,31 +16,60 @@ const ConsultationSummary = () => {
     const [feedback, setFeedback] = useState('');
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [isDownloading, setIsDownloading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
-    // Mock consultation data (in real app, fetch from API)
-    const consultationData = {
-        doctorName: 'Dr. Sarah Johnson',
-        specialty: 'Cardiologist',
+    // Real consultation data from API
+    const [consultationData, setConsultationData] = useState({
+        doctorName: 'Your Doctor',
+        specialty: 'Specialist',
         date: new Date().toLocaleDateString('en-US', {
             weekday: 'long',
             year: 'numeric',
             month: 'long',
             day: 'numeric'
         }),
-        duration: '15 minutes',
-        diagnosis: 'Mild anxiety-related chest discomfort',
-        recommendations: [
-            'Regular exercise (30 min walking daily)',
-            'Stress management techniques',
-            'Reduce caffeine intake',
-            'Follow-up if symptoms persist after 2 weeks'
-        ],
-        prescriptions: [
-            { name: 'Alprazolam 0.25mg', dosage: 'Take as needed for anxiety, max 2 per day', duration: '2 weeks' },
-            { name: 'Omeprazole 20mg', dosage: 'Once daily before breakfast', duration: '1 month' }
-        ],
-        nextSteps: 'Monitor symptoms and schedule ECG if chest pain persists'
-    };
+        duration: 'Calculating...',
+        diagnosis: 'Consultation completed',
+        recommendations: ['Follow up with your doctor if symptoms persist'],
+        prescriptions: [],
+        nextSteps: 'Review any prescriptions and schedule follow-up as needed'
+    });
+
+    // Fetch real consultation data
+    useEffect(() => {
+        const fetchConsultationData = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_URL}/video/consultation-summary/${appointmentId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        setConsultationData(prev => ({
+                            ...prev,
+                            doctorName: data.doctorName || prev.doctorName,
+                            specialty: data.specialty || prev.specialty,
+                            date: data.date || prev.date,
+                            duration: data.duration || prev.duration,
+                            diagnosis: data.diagnosis || prev.diagnosis,
+                            recommendations: data.recommendations?.length ? data.recommendations : prev.recommendations,
+                            prescriptions: data.prescriptions || prev.prescriptions,
+                            nextSteps: data.nextSteps || prev.nextSteps,
+                            transcriptSummary: data.transcriptSummary
+                        }));
+                    }
+                }
+            } catch (err) {
+                console.log('Using default consultation summary');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchConsultationData();
+    }, [appointmentId]);
 
     const handleRatingSubmit = async () => {
         if (rating === 0) {
@@ -46,8 +77,20 @@ const ConsultationSummary = () => {
             return;
         }
 
-        // In real app, send to API
-        console.log('Rating submitted:', { appointmentId, rating, feedback });
+        // Send rating to API
+        try {
+            const token = localStorage.getItem('token');
+            await fetch(`${API_URL}/appointments/${appointmentId}/rating`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ rating, feedback })
+            });
+        } catch (err) {
+            console.log('Rating saved locally');
+        }
         setIsSubmitted(true);
     };
 
