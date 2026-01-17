@@ -38,7 +38,8 @@ Post pandemic, quick access to quality, affordable and reliable healthcare from 
 | 📋 **Digital Prescriptions** | Generate and download professional PDF prescriptions |
 | 🎙️ **Live Transcription** | Real-time speech-to-text with DeepGram AI |
 | 🔐 **Google OAuth** | Secure one-click login with Google |
-| 💳 **Secure Payments** | Square API integration for consultations |
+| 💳 **Dual Payment Options** | Square API + Stripe for flexible payments |
+| 🧠 **Gemini AI Integration** | Symptom analysis and consultation summaries |
 | 📧 **Email Notifications** | SendGrid-powered booking confirmations and reminders |
 | 🔒 **Password Reset** | Secure token-based password recovery |
 | 🌐 **Multi-language** | English & Hindi language support |
@@ -75,9 +76,11 @@ Post pandemic, quick access to quality, affordable and reliable healthcare from 
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │                      EXTERNAL SERVICES                           │
-├──────────────┬──────────────┬──────────────┬───────────────────┤
-│   Daily.co   │   DeepGram   │   Square     │   SendGrid        │
-│   (Video)    │ (Transcribe) │  (Payments)  │   (Email)         │
+├────────────┬────────────┬────────────┬────────────┬────────────┤
+│  Daily.co  │  DeepGram  │   Square   │   Stripe   │  SendGrid  │
+│  (Video)   │(Transcribe)│ (Payment1) │ (Payment2) │  (Email)   │
+├────────────┴────────────┴────────────┴────────────┴────────────┤
+│              Google OAuth  │  Gemini AI  │  Firebase            │
 └──────────────┴──────────────┴──────────────┴───────────────────┘
 ```
 
@@ -108,8 +111,11 @@ Post pandemic, quick access to quality, affordable and reliable healthcare from 
 |---------|---------|
 | Daily.co | WebRTC Video Calls |
 | DeepGram | Real-time Transcription |
-| Square | Payment Processing |
+| Square | Payment Processing (Primary) |
+| Stripe | Payment Processing (Alternative) |
 | Google OAuth | Social Login |
+| Gemini AI | Symptom Analysis & Summaries |
+| SendGrid | Transactional Emails |
 
 ---
 
