@@ -479,6 +479,3 @@
 - **Network:** Broadband, 4G simulated
 
 ---
-
-*Document Generated: January 18, 2026*  
-*HealthSync QA Team*

@@ -119,6 +119,26 @@ Post pandemic, quick access to quality, affordable and reliable healthcare from 
 
 ---
 
+## 📐 Design & Documentation
+
+### UI/UX Design
+- **Design Presentation:** [View on Canva](https://www.canva.com/design/DAG-s2hhNY8/q-cqZD5alNpbGIUl2_74Gg/view)
+- **Information Architecture:** [View Document](./docs/INFORMATION_ARCHITECTURE.md)
+
+### Design System
+| Element | Value |
+|---------|-------|
+| Primary Color | #0EA5E9 (Blue) |
+| Secondary Color | #10B981 (Green) |
+| Font Family | Inter |
+| Dark/Light Mode | ✅ Supported |
+
+### Testing Documentation
+- **Manual Test Cases:** [41 Test Cases](./docs/MANUAL_TEST_CASES.md)
+- **Automated Tests:** [Testing Guide](./docs/AUTOMATED_TESTS.md)
+
+---
+
 ## 🚀 Getting Started
 
 ### Prerequisites

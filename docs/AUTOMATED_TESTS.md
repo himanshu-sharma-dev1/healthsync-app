@@ -205,5 +205,3 @@ See [`MANUAL_TEST_CASES.md`](./MANUAL_TEST_CASES.md) for the complete manual tes
 
 ---
 
-*Last Updated: January 18, 2026*
-*HealthSync QA Team*
