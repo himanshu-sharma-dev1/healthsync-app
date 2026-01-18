@@ -29,22 +29,57 @@ Post pandemic, quick access to quality, affordable and reliable healthcare from 
 
 **HealthSync** is a comprehensive AI-powered telehealth platform that bridges the gap between patients and healthcare providers through cutting-edge technology.
 
-### ✨ Key Features
+---
+
+## 🎥 Demo Video
+
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=YOUR_VIDEO_ID">
+    <img src="docs/thumbnail.png" alt="HealthSync Demo" width="600"/>
+  </a>
+</p>
+
+<p align="center">
+  👆 <strong>Click to watch the full demo</strong> | <a href="docs/demo_video.mp4">Download Video</a>
+</p>
+
+---
+
+## 🔥 WOW Features (Top 10)
+
+| # | Feature | How to Demo | Impact |
+|---|---------|-------------|--------|
+| 1 | 🤖 **AI Symptom Analysis** | Dashboard → Chat icon → Type symptoms | Very High |
+| 2 | 📧 **Medication Email Reminder** | Medication Tracker → "📧 Test Email" | Very High |
+| 3 | 📊 **Weekly Medication View** | Medication Tracker → "📆 Week" toggle | High |
+| 4 | 🚨 **Emergency Detection** | Video Call → Say "chest pain" | Very High |
+| 5 | 📝 **Real-Time Transcription** | Video Call → Speak → Watch text appear | High |
+| 6 | 📧 **Auto Email After Payment** | Complete payment → See "✅ Email sent" | High |
+| 7 | 📧 **Appointment Email Button** | Dashboard → Click 📧 on appointment card | Medium |
+| 8 | 🔐 **Google OAuth Login** | Login → "Sign in with Google" | Medium |
+| 9 | 💊 **PDF Prescription Download** | Prescriptions → "Download PDF" | Medium |
+| 10 | 🌍 **Multi-Language Support** | Any page → Language toggle (EN/HI) | Medium |
+
+---
+
+## ✨ All Features
 
 | Feature | Description |
 |---------|-------------|
 | 📹 **HD Video Consultations** | Real-time video calls with screen sharing and chat |
 | 🤖 **AI Emergency Detection** | Automatic detection of 25+ emergency keywords during calls |
-| 🩺 **AI Doctor Recommendations** | Smart specialty matching based on symptoms with visual "Recommended" tags |
+| 🩺 **AI Doctor Recommendations** | Smart specialty matching based on symptoms |
 | 📋 **Digital Prescriptions** | Generate and download professional PDF prescriptions |
 | 🎙️ **Live Transcription** | Real-time speech-to-text with DeepGram AI |
+| 💊 **Medication Tracker** | Weekly view with email reminders |
 | 🔐 **Google OAuth** | Secure one-click login with Google |
 | 💳 **Dual Payment Options** | Square API + Stripe for flexible payments |
 | 🧠 **Gemini AI Integration** | Symptom analysis and consultation summaries |
-| 📧 **Email Notifications** | SendGrid-powered booking confirmations and reminders |
-| 🔒 **Password Reset** | Secure token-based password recovery |
+| 📧 **Email Notifications** | Booking confirmations, medication reminders, password reset |
+| 🌗 **Dark/Light Mode** | Theme switching with header toggle |
+| ♿ **Accessibility Panel** | High contrast, font size controls |
+| 📊 **Performance Metrics** | Real-time load times and memory usage |
 | 🌐 **Multi-language** | English & Hindi language support |
-| ♿ **Accessibility** | WCAG compliant with voice commands |
 
 ---
 
