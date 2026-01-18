@@ -236,4 +236,42 @@ router.delete('/:id', protect, async (req, res) => {
     }
 });
 
+// @route   POST /api/appointments/test-email
+// @desc    Send test appointment confirmation email (for demo)
+// @access  Public (for demo purposes)
+router.post('/test-email', async (req, res) => {
+    try {
+        const { email, doctorName, specialty, date, time } = req.body;
+
+        if (!email) {
+            return res.status(400).json({
+                success: false,
+                message: 'Email is required'
+            });
+        }
+
+        await sendBookingConfirmation({
+            doctor: doctorName || 'Dr. Sarah Johnson',
+            specialty: specialty || 'General Physician',
+            date: date || new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),
+            time: time || '10:00 AM',
+            id: 'DEMO-' + Date.now()
+        }, email);
+
+        console.log('📧 Test appointment confirmation sent to:', email);
+
+        res.json({
+            success: true,
+            message: 'Appointment confirmation email sent!'
+        });
+
+    } catch (error) {
+        console.error('Test email error:', error.message);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to send email: ' + error.message
+        });
+    }
+});
+
 export default router;

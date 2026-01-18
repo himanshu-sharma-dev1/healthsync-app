@@ -1,6 +1,7 @@
 import express from 'express';
 import Groq from 'groq-sdk';
 import { protect } from '../middleware/auth.js';
+import { sendMedicationReminder } from '../services/emailService.js';
 
 const router = express.Router();
 
@@ -345,7 +346,6 @@ Respond in JSON: {"questions":["Question 1?","Question 2?",...]}`;
         res.json({
             success: true,
             questions: ['How long have you had these symptoms?', 'Any allergies?', 'Current medications?'],
-            fallback: true
         });
     }
 });
@@ -369,4 +369,52 @@ router.get('/status', (req, res) => {
     });
 });
 
+// ============================================
+// Medication Reminder Email (Demo)
+// ============================================
+
+router.post('/send-medication-reminder', async (req, res) => {
+    try {
+        const { email, name, medications } = req.body;
+
+        if (!email) {
+            return res.status(400).json({
+                success: false,
+                message: 'Email address is required'
+            });
+        }
+
+        // Default demo medications if none provided
+        const meds = medications && medications.length > 0 ? medications : [
+            { name: 'Metformin', dosage: '500mg', times: [{ label: 'Morning' }, { label: 'Evening' }] },
+            { name: 'Lisinopril', dosage: '10mg', times: [{ label: 'Morning' }] }
+        ];
+
+        const result = await sendMedicationReminder(
+            email,
+            name || 'Patient',
+            meds
+        );
+
+        if (result.success) {
+            console.log('📧 Medication reminder sent to:', email);
+            res.json({
+                success: true,
+                message: 'Medication reminder email sent!',
+                provider: result.provider
+            });
+        } else {
+            throw new Error(result.error || 'Failed to send email');
+        }
+
+    } catch (error) {
+        console.error('Medication reminder error:', error.message);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to send reminder: ' + error.message
+        });
+    }
+});
+
 export default router;
+

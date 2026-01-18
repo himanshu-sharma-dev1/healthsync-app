@@ -1,7 +1,7 @@
 .metrics-toggle {
     position: fixed;
     bottom: 80px;
-    right: 20px;
+    left: 20px;
     width: 45px;
     height: 45px;
     border-radius: 50%;
@@ -22,7 +22,7 @@
 .metrics-panel {
     position: fixed;
     bottom: 140px;
-    right: 20px;
+    left: 20px;
     width: 250px;
     background: var(--bg-secondary);
     border: 1px solid var(--border);

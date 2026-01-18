@@ -520,6 +520,37 @@ const Dashboard = () => {
                                                 {t('joinCall')}
                                             </Link>
                                             <button
+                                                className="btn btn-info btn-sm"
+                                                onClick={async () => {
+                                                    const email = prompt('Enter email to send confirmation:', 'hs1132sharma7@gmail.com');
+                                                    if (!email) return;
+                                                    try {
+                                                        const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5001/api'}/appointments/test-email`, {
+                                                            method: 'POST',
+                                                            headers: { 'Content-Type': 'application/json' },
+                                                            body: JSON.stringify({
+                                                                email,
+                                                                doctorName: apt.doctor,
+                                                                specialty: apt.specialty,
+                                                                date: apt.date,
+                                                                time: apt.time
+                                                            })
+                                                        });
+                                                        const data = await res.json();
+                                                        if (data.success) {
+                                                            alert('📧 Appointment confirmation email sent!');
+                                                        } else {
+                                                            alert('❌ Failed: ' + data.message);
+                                                        }
+                                                    } catch (err) {
+                                                        alert('❌ Error sending email');
+                                                    }
+                                                }}
+                                                title="Send confirmation email"
+                                            >
+                                                📧
+                                            </button>
+                                            <button
                                                 className="btn btn-success btn-sm"
                                                 onClick={() => handleCompleteAppointment(apt)}
                                                 title="Mark as completed"

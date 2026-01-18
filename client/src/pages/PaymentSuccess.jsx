@@ -2,14 +2,22 @@ import { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import './PaymentSuccess.css';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+
 const PaymentSuccess = () => {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const [verifying, setVerifying] = useState(true);
     const [verified, setVerified] = useState(false);
+    const [emailSent, setEmailSent] = useState(false);
+    const [emailError, setEmailError] = useState(null);
 
     const appointmentId = searchParams.get('appointmentId');
     const transactionId = searchParams.get('transactionId');
+    const doctorName = searchParams.get('doctor') || 'Dr. Sarah Johnson';
+    const specialty = searchParams.get('specialty') || 'General Physician';
+    const date = searchParams.get('date') || new Date().toLocaleDateString();
+    const time = searchParams.get('time') || '10:00 AM';
 
     useEffect(() => {
         verifyPayment();
@@ -24,10 +32,50 @@ const PaymentSuccess = () => {
             // const response = await fetch(`/api/payments/verify/${transactionId}`);
 
             setVerified(true);
+
+            // Auto-send confirmation email after successful payment
+            sendConfirmationEmail();
         } catch (error) {
             console.error('Payment verification failed:', error);
         } finally {
             setVerifying(false);
+        }
+    };
+
+    const sendConfirmationEmail = async () => {
+        try {
+            // Get email from localStorage or prompt
+            const storedUser = localStorage.getItem('healthsync_user');
+            let userEmail = storedUser ? JSON.parse(storedUser)?.email : null;
+
+            if (!userEmail) {
+                userEmail = prompt('Enter your email for confirmation:', 'hs1132sharma7@gmail.com');
+            }
+
+            if (!userEmail) return;
+
+            const response = await fetch(`${API_URL}/appointments/test-email`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: userEmail,
+                    doctorName,
+                    specialty,
+                    date,
+                    time
+                })
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                setEmailSent(true);
+                console.log('📧 Confirmation email sent to:', userEmail);
+            } else {
+                setEmailError(data.message);
+            }
+        } catch (error) {
+            console.error('Failed to send email:', error);
+            setEmailError('Failed to send confirmation email');
         }
     };
 
@@ -110,7 +158,11 @@ Thank you for choosing HealthSync!
                     <div className="next-steps">
                         <h3>What's Next?</h3>
                         <ul>
-                            <li>📧 A confirmation email has been sent to your registered email</li>
+                            <li style={{ color: emailSent ? '#10b981' : emailError ? '#ef4444' : '#f59e0b' }}>
+                                {emailSent ? '✅ Confirmation email sent!' :
+                                    emailError ? `❌ ${emailError}` :
+                                        '⏳ Sending confirmation email...'}
+                            </li>
                             <li>📅 Add the appointment to your calendar</li>
                             <li>🎥 Join the waiting room 5 minutes before your scheduled time</li>
                             <li>📝 Keep your symptoms and questions ready</li>

@@ -8,12 +8,13 @@ const AIChatbot = () => {
     const [messages, setMessages] = useState([
         {
             role: 'assistant',
-            content: '👋 Hi! I\'m HealthSync AI. I can help you understand your symptoms and guide you to the right doctor. How can I help you today?'
+            content: '👋 Hi! I\'m HealthSync AI. Tell me about your symptoms and I\'ll help you find the right doctor. What health concerns do you have today?'
         }
     ]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [analysis, setAnalysis] = useState(null);
+    const [hasDescribedSymptoms, setHasDescribedSymptoms] = useState(false);
     const messagesEndRef = useRef(null);
 
     const scrollToBottom = () => {
@@ -34,16 +35,24 @@ const AIChatbot = () => {
         setAnalysis(null);
 
         try {
-            // First, analyze symptoms for structured data
-            const analyzeRes = await fetch(`${API_URL}/ai/analyze-symptoms`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ symptoms: userMessage })
-            });
-            const analyzeData = await analyzeRes.json();
+            // Check if message looks like symptoms (at least 8 chars and contains health-related words)
+            const symptomKeywords = ['pain', 'ache', 'fever', 'headache', 'cough', 'cold', 'sore', 'hurt', 'dizzy', 'nausea', 'tired', 'fatigue', 'swelling', 'rash', 'itch', 'bleeding', 'vomit', 'diarrhea', 'breathing', 'chest', 'stomach', 'back', 'throat', 'ear', 'eye', 'skin', 'muscle', 'joint', 'weak', 'numbness', 'burn', 'cramp', 'infection', 'allergy', 'insomnia', 'anxiety', 'depression', 'symptom', 'sick', 'ill', 'problem', 'issue', 'feeling', 'days', 'weeks', 'hurts', 'paining', 'suffering', 'having', 'getting'];
+            const lowerMessage = userMessage.toLowerCase();
+            const looksLikeSymptoms = userMessage.length >= 8 && symptomKeywords.some(kw => lowerMessage.includes(kw));
 
-            if (analyzeData.success && analyzeData.analysis) {
-                setAnalysis(analyzeData.analysis);
+            // Only analyze symptoms if message looks like a symptom description
+            if (looksLikeSymptoms) {
+                setHasDescribedSymptoms(true);
+                const analyzeRes = await fetch(`${API_URL}/ai/analyze-symptoms`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ symptoms: userMessage })
+                });
+                const analyzeData = await analyzeRes.json();
+
+                if (analyzeData.success && analyzeData.analysis) {
+                    setAnalysis(analyzeData.analysis);
+                }
             }
 
             // Then get conversational response

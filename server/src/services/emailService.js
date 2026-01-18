@@ -265,9 +265,92 @@ export const sendPrescriptionEmail = async (prescription, patientEmail) => {
     return sendEmail({ to: patientEmail, subject, html });
 };
 
+/**
+ * Send medication reminder email
+ */
+export const sendMedicationReminder = async (patientEmail, patientName, medications) => {
+    const subject = `💊 Medication Reminder - HealthSync`;
+
+    const medList = medications.map(med => `
+        <tr>
+            <td style="padding: 12px; border-bottom: 1px solid #e2e8f0;">${med.name}</td>
+            <td style="padding: 12px; border-bottom: 1px solid #e2e8f0;">${med.dosage}</td>
+            <td style="padding: 12px; border-bottom: 1px solid #e2e8f0;">${med.times?.map(t => t.label).join(', ') || 'Daily'}</td>
+        </tr>
+    `).join('');
+
+    const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 20px; }
+                .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+                .header { background: linear-gradient(135deg, #10b981, #34d399); padding: 30px; text-align: center; color: white; }
+                .header h1 { margin: 0; font-size: 24px; }
+                .content { padding: 30px; }
+                .med-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                .med-table th { background: #f8fafc; padding: 12px; text-align: left; color: #64748b; }
+                .med-table td { padding: 12px; border-bottom: 1px solid #e2e8f0; }
+                .alert { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0; border-radius: 0 8px 8px 0; }
+                .btn { display: inline-block; background: #10b981; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; margin-top: 20px; }
+                .footer { background: #f8fafc; padding: 20px; text-align: center; color: #64748b; font-size: 12px; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>💊 Medication Reminder</h1>
+                    <p>Time to take your medications!</p>
+                </div>
+                <div class="content">
+                    <h2>Hello ${patientName || 'there'}!</h2>
+                    <p>This is a friendly reminder to take your scheduled medications:</p>
+                    
+                    <table class="med-table">
+                        <thead>
+                            <tr>
+                                <th>Medication</th>
+                                <th>Dosage</th>
+                                <th>Schedule</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${medList}
+                        </tbody>
+                    </table>
+                    
+                    <div class="alert">
+                        <strong>⚠️ Important:</strong>
+                        <ul style="margin: 10px 0 0 0; padding-left: 20px;">
+                            <li>Take medications with water unless otherwise directed</li>
+                            <li>Don't skip doses even if you feel better</li>
+                            <li>Contact your doctor if you experience side effects</li>
+                        </ul>
+                    </div>
+                    
+                    <center>
+                        <a href="${process.env.CLIENT_URL || 'https://healthsync.himanshu-sharma.me'}/dashboard" class="btn">
+                            ✅ Mark as Taken
+                        </a>
+                    </center>
+                </div>
+                <div class="footer">
+                    <p>Stay healthy! 🏥 HealthSync is here for you.</p>
+                    <p>© 2026 HealthSync. All rights reserved.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+    `;
+
+    return sendEmail({ to: patientEmail, subject, html });
+};
+
 export default {
     sendEmail,
     sendBookingConfirmation,
     sendAppointmentReminder,
-    sendPrescriptionEmail
+    sendPrescriptionEmail,
+    sendMedicationReminder
 };
