@@ -34,7 +34,7 @@ Post pandemic, quick access to quality, affordable and reliable healthcare from 
 ## 🎥 Demo Video
 
 <p align="center">
-  <a href="https://www.youtube.com/watch?v=YOUR_VIDEO_ID">
+  <a href="https://youtu.be/-nLdea5sPCk">
     <img src="docs/thumbnail.png" alt="HealthSync Demo" width="600"/>
   </a>
 </p>
