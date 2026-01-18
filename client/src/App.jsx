@@ -7,6 +7,7 @@ import Navbar from './components/layout/Navbar';
 import AccessibilityPanel from './components/AccessibilityPanel';
 import OnboardingGuide from './components/OnboardingGuide';
 import PerformanceMetrics from './components/PerformanceMetrics';
+import AIChatbot from './components/AIChatbot';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -86,6 +87,7 @@ function App() {
               {/* Global Components */}
               <AccessibilityPanel />
               <PerformanceMetrics />
+              <AIChatbot />
 
               {/* First-time User Onboarding */}
               {showOnboarding && (

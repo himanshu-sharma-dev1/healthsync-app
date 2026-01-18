@@ -4,6 +4,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { Link } from 'react-router-dom';
 import { appointmentService } from '../services/api';
 import { demoPrescription, downloadPrescriptionPDF } from '../utils/pdfGenerator';
+import MedicationTracker from '../components/MedicationTracker';
 import './Dashboard.css';
 
 // Import avatars
@@ -462,6 +463,12 @@ const Dashboard = () => {
                         >
                             💊 {t('prescriptions')}
                         </button>
+                        <button
+                            className={`tab-btn ${activeTab === 'medications' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('medications')}
+                        >
+                            ⏰ Medication Tracker
+                        </button>
                     </div>
 
                     {/* Sort Dropdown - Only for upcoming */}
@@ -617,6 +624,11 @@ const Dashboard = () => {
                                 </div>
                             ))}
                         </div>
+                    )}
+
+                    {/* Medication Tracker */}
+                    {activeTab === 'medications' && (
+                        <MedicationTracker />
                     )}
                 </div>
 

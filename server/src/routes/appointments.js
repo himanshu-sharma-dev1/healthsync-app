@@ -2,6 +2,7 @@ import express from 'express';
 import Appointment from '../models/Appointment.js';
 import { protect, authorize } from '../middleware/auth.js';
 import { v4 as uuidv4 } from 'uuid';
+import { sendBookingConfirmation } from '../services/emailService.js';
 
 const router = express.Router();
 
@@ -97,6 +98,23 @@ router.post('/', protect, authorize('patient'), async (req, res) => {
         const populatedAppointment = await Appointment.findById(appointment._id)
             .populate('patient', 'firstName lastName email')
             .populate('doctor', 'firstName lastName email specialty');
+
+        // Send booking confirmation email
+        try {
+            if (populatedAppointment.patient?.email) {
+                await sendBookingConfirmation({
+                    doctor: `Dr. ${populatedAppointment.doctor.firstName} ${populatedAppointment.doctor.lastName}`,
+                    date: new Date(scheduledDate).toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),
+                    time: scheduledTime,
+                    id: appointment._id,
+                    specialty: populatedAppointment.doctor.specialty || specialty
+                }, populatedAppointment.patient.email);
+                console.log('📧 Booking confirmation email sent');
+            }
+        } catch (emailError) {
+            console.error('Email sending failed:', emailError.message);
+            // Don't fail the appointment creation if email fails
+        }
 
         res.status(201).json({
             success: true,

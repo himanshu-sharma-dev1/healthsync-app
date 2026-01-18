@@ -1,0 +1,269 @@
+/* Medication Tracker Styles */
+
+.medication-tracker {
+    background: var(--bg-secondary, #1e1e32);
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tracker-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.header-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header-title span {
+    font-size: 24px;
+}
+
+.header-title h3 {
+    margin: 0;
+    font-size: 18px;
+    color: var(--text-primary, #fff);
+}
+
+.add-med-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0ea5e9, #3b82f6);
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+}
+
+.add-med-btn:hover {
+    transform: scale(1.1);
+}
+
+/* Progress Section */
+.progress-section {
+    margin-bottom: 20px;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: var(--text-secondary, #9ca3af);
+}
+
+.progress-percent {
+    font-weight: 600;
+    color: #10b981;
+}
+
+.progress-bar {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #34d399);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+/* Add Form */
+.add-form {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.add-form input,
+.add-form select {
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary, #fff);
+    font-size: 14px;
+    outline: none;
+}
+
+.add-form input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.add-form input:focus,
+.add-form select:focus {
+    border-color: #0ea5e9;
+}
+
+.save-btn {
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #10b981, #34d399);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.save-btn:hover {
+    transform: translateY(-2px);
+}
+
+/* Medications List */
+.medications-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.medication-item {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.med-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.med-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.med-name {
+    font-weight: 600;
+    color: var(--text-primary, #fff);
+    font-size: 16px;
+}
+
+.med-dosage {
+    font-size: 13px;
+    color: var(--text-secondary, #9ca3af);
+}
+
+.delete-btn {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+}
+
+.delete-btn:hover {
+    opacity: 1;
+}
+
+/* Time Slots */
+.med-times {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.time-slot {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    cursor: pointer;
+    transition: all 0.2s;
+    flex: 1;
+    min-width: 120px;
+}
+
+.time-slot:hover {
+    border-color: #0ea5e9;
+    background: rgba(14, 165, 233, 0.1);
+}
+
+.time-slot.taken {
+    border-color: #10b981;
+    background: rgba(16, 185, 129, 0.15);
+}
+
+.time-emoji {
+    font-size: 18px;
+}
+
+.time-label {
+    font-size: 12px;
+    color: var(--text-secondary, #9ca3af);
+}
+
+.time-value {
+    font-size: 11px;
+    color: var(--text-secondary, #9ca3af);
+    opacity: 0.7;
+}
+
+.check-icon {
+    margin-left: auto;
+    font-size: 16px;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 30px;
+    color: var(--text-secondary, #9ca3af);
+}
+
+.empty-state span {
+    font-size: 48px;
+    display: block;
+    margin-bottom: 12px;
+    opacity: 0.5;
+}
+
+.empty-state p {
+    margin: 0 0 16px 0;
+}
+
+.empty-state button {
+    padding: 10px 20px;
+    border: 1px solid #0ea5e9;
+    border-radius: 8px;
+    background: transparent;
+    color: #0ea5e9;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.empty-state button:hover {
+    background: #0ea5e9;
+    color: white;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .time-slot {
+        min-width: 100%;
+    }
+}

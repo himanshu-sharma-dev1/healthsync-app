@@ -133,6 +133,82 @@ If symptoms sound serious (chest pain, difficulty breathing, etc.), urge immedia
 });
 
 // ============================================
+// AI FEATURE: Symptom Analyzer (Structured)
+// ============================================
+router.post('/analyze-symptoms', async (req, res) => {
+    try {
+        const { symptoms } = req.body;
+
+        if (!symptoms || symptoms.trim().length < 3) {
+            return res.status(400).json({
+                success: false,
+                message: 'Please describe your symptoms'
+            });
+        }
+
+        if (!process.env.GROQ_API_KEY) {
+            return res.json({
+                success: true,
+                analysis: {
+                    urgencyLevel: 3,
+                    urgencyText: 'Consult a doctor for proper evaluation',
+                    possibleConditions: ['Please consult a healthcare provider'],
+                    recommendedSpecialist: 'General Physician',
+                    immediateAdvice: 'Describe symptoms to your doctor',
+                    disclaimer: 'This is not a medical diagnosis.'
+                },
+                fallback: true
+            });
+        }
+
+        const prompt = `Analyze these patient symptoms and provide structured guidance:
+Symptoms: "${symptoms}"
+
+Respond ONLY in valid JSON:
+{
+    "urgencyLevel": 1-5 (1=routine, 3=moderate, 5=emergency),
+    "urgencyText": "brief description",
+    "possibleConditions": ["condition1", "condition2", "condition3"],
+    "recommendedSpecialist": "specialty name",
+    "suggestedQuestions": ["question1", "question2"],
+    "immediateAdvice": "what to do now",
+    "disclaimer": "This is not a diagnosis. Please consult a doctor."
+}`;
+
+        const completion = await getGroqClient().chat.completions.create({
+            messages: [{ role: 'user', content: prompt }],
+            model: 'llama-3.3-70b-versatile',
+            temperature: 0.3,
+            max_tokens: 600,
+            response_format: { type: 'json_object' }
+        });
+
+        const analysis = JSON.parse(completion.choices[0]?.message?.content || '{}');
+
+        res.json({
+            success: true,
+            analysis,
+            poweredBy: 'Groq AI (Llama 3.3 70B)'
+        });
+
+    } catch (error) {
+        console.error('Symptom Analysis Error:', error.message);
+        res.json({
+            success: true,
+            analysis: {
+                urgencyLevel: 3,
+                urgencyText: 'Please consult a doctor',
+                possibleConditions: ['Analysis unavailable'],
+                recommendedSpecialist: 'General Physician',
+                immediateAdvice: 'If severe, seek immediate medical attention.',
+                disclaimer: 'This is not a medical diagnosis.'
+            },
+            fallback: true
+        });
+    }
+});
+
+// ============================================
 // AI FEATURE 3: Prescription Explanation
 // ============================================
 router.post('/explain-prescription', async (req, res) => {
