@@ -45,20 +45,20 @@ Post pandemic, quick access to quality, affordable and reliable healthcare from 
 
 ---
 
-## 🔥 WOW Features (Top 10)
+## 🔥 Key Features
 
-| # | Feature | How to Demo | Impact |
-|---|---------|-------------|--------|
-| 1 | 🤖 **AI Symptom Analysis** | Dashboard → Chat icon → Type symptoms | Very High |
-| 2 | 📧 **Medication Email Reminder** | Medication Tracker → "📧 Test Email" | Very High |
-| 3 | 📊 **Weekly Medication View** | Medication Tracker → "📆 Week" toggle | High |
-| 4 | 🚨 **Emergency Detection** | Video Call → Say "chest pain" | Very High |
-| 5 | 📝 **Real-Time Transcription** | Video Call → Speak → Watch text appear | High |
-| 6 | 📧 **Auto Email After Payment** | Complete payment → See "✅ Email sent" | High |
-| 7 | 📧 **Appointment Email Button** | Dashboard → Click 📧 on appointment card | Medium |
-| 8 | 🔐 **Google OAuth Login** | Login → "Sign in with Google" | Medium |
-| 9 | 💊 **PDF Prescription Download** | Prescriptions → "Download PDF" | Medium |
-| 10 | 🌍 **Multi-Language Support** | Any page → Language toggle (EN/HI) | Medium |
+| # | Feature | How to Demo |
+|---|---------|-------------|
+| 1 | 🤖 **AI Symptom Analysis** | Dashboard → Chat icon → Type symptoms |
+| 2 | 📧 **Medication Email Reminder** | Medication Tracker → "📧 Test Email" |
+| 3 | 📊 **Weekly Medication View** | Medication Tracker → "📆 Week" toggle |
+| 4 | 🚨 **Emergency Detection** | Video Call → Say "chest pain" |
+| 5 | 📝 **Real-Time Transcription** | Video Call → Speak → Watch text appear |
+| 6 | 📧 **Auto Email After Payment** | Complete payment → See "✅ Email sent" |
+| 7 | 📧 **Appointment Email Button** | Dashboard → Click 📧 on appointment card |
+| 8 | 🔐 **Google OAuth Login** | Login → "Sign in with Google" |
+| 9 | 💊 **PDF Prescription Download** | Prescriptions → "Download PDF" |
+| 10 | 🌍 **Multi-Language Support** | Any page → Language toggle (EN/HI) |
 
 ---
 
@@ -316,7 +316,7 @@ healthsync-app/
 ## 🔗 Links
 
 - **GitHub Repository**: [github.com/himanshu-sharma-dev1/healthsync-app](https://github.com/himanshu-sharma-dev1/healthsync-app)
-- **Live Demo**: [healthsync-app.vercel.app](https://healthsync-app.vercel.app) *(coming soon)*
+- **Live Demo**: [healthsync.himanshu-sharma.me](https://healthsync.himanshu-sharma.me)
 
 ---
 
