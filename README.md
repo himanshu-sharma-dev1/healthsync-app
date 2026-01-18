@@ -1,6 +1,6 @@
 # 🏥 HealthSync - AI-Powered Telehealth Platform
 
-[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen)](https://healthsync-app.vercel.app)
+[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen)](https://healthsync.himanshu-sharma.me)
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-blue)](https://github.com/himanshu-sharma-dev1/healthsync-app)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
@@ -35,6 +35,7 @@ Post pandemic, quick access to quality, affordable and reliable healthcare from 
 |---------|-------------|
 | 📹 **HD Video Consultations** | Real-time video calls with screen sharing and chat |
 | 🤖 **AI Emergency Detection** | Automatic detection of 25+ emergency keywords during calls |
+| 🩺 **AI Doctor Recommendations** | Smart specialty matching based on symptoms with visual "Recommended" tags |
 | 📋 **Digital Prescriptions** | Generate and download professional PDF prescriptions |
 | 🎙️ **Live Transcription** | Real-time speech-to-text with DeepGram AI |
 | 🔐 **Google OAuth** | Secure one-click login with Google |

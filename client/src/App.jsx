@@ -25,6 +25,7 @@ import EPrescription from './pages/EPrescription';
 import DoctorPrescription from './pages/DoctorPrescription';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import GoogleAuthSuccess from './pages/GoogleAuthSuccess';
 import Profile from './pages/Profile';
 import './index.css';
 import './theme.css';
@@ -60,6 +61,7 @@ function App() {
                   <Route path="/forgot-password" element={<ForgotPassword />} />
                   <Route path="/reset-password/:token" element={<ResetPassword />} />
                   <Route path="/doctors" element={<Doctors />} />
+                  <Route path="/auth/google/success" element={<GoogleAuthSuccess />} />
 
                   {/* Patient Flow Routes */}
                   <Route path="/intake" element={<PatientIntake />} />
