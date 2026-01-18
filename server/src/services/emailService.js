@@ -37,18 +37,26 @@ export const sendEmail = async ({ to, subject, html, text }) => {
         try {
             const msg = {
                 to,
-                from: process.env.SENDGRID_FROM_EMAIL || process.env.SMTP_USER,
+                from: {
+                    email: process.env.SENDGRID_FROM_EMAIL || process.env.SMTP_USER,
+                    name: process.env.SMTP_FROM_NAME || 'HealthSync'
+                },
                 subject,
-                text: text || '',
-                html: html || ''
+                text: text || 'Email content',
+                html: html || '<p>Email content</p>'
             };
 
             const result = await sgMail.send(msg);
             console.log('✅ Email sent via SendGrid:', result[0]?.statusCode);
             return { success: true, provider: 'sendgrid' };
         } catch (error) {
+            // Log full SendGrid error details
             console.error('❌ SendGrid error:', error.message);
-            console.log('⚠️ Falling back to Gmail SMTP...');
+            if (error.response) {
+                console.error('❌ SendGrid details:', JSON.stringify(error.response.body));
+            }
+            // Don't fallback to SMTP on DigitalOcean (ports blocked)
+            return { success: false, error: error.message };
         }
     }
 
