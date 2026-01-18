@@ -36,6 +36,9 @@ const io = new Server(httpServer, {
 // HIPAA COMPLIANT SECURITY MIDDLEWARE
 // ============================================
 
+// Trust proxy for DigitalOcean/Nginx reverse proxy (fixes rate limiter CORS issue)
+app.set('trust proxy', 1);
+
 // CORS - MUST come first to handle preflight OPTIONS requests
 app.use(cors({
   origin: process.env.CLIENT_URL || 'http://localhost:5173',
