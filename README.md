@@ -1,8 +1,8 @@
 # 🏥 HealthSync - AI-Powered Telehealth Platform
 
-[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen)](https://healthsync.himanshu-sharma.me)
-[![GitHub](https://img.shields.io/badge/GitHub-Repository-blue)](https://github.com/himanshu-sharma-dev1/healthsync-app)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-healthsync.himanshu--sharma.me-brightgreen?style=for-the-badge)](https://healthsync.himanshu-sharma.me)
+[![YouTube Demo](https://img.shields.io/badge/🎬_Watch_Demo-YouTube-red?style=for-the-badge&logo=youtube)](https://youtu.be/-nLdea5sPCk)
+[![GitHub](https://img.shields.io/badge/📁_Source_Code-GitHub-blue?style=for-the-badge&logo=github)](https://github.com/himanshu-sharma-dev1/healthsync-app)
 
 > **Veersa Hackathon 2026** | Making Quality Healthcare Accessible from Anywhere
 
