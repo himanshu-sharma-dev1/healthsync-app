@@ -47,18 +47,23 @@ const DoctorPrescription = () => {
     };
 
     const handleDownloadPDF = () => {
-        const prescriptionData = {
-            id: `RX-${Date.now()}`,
-            appointmentId,
-            doctor: user?.firstName ? `Dr. ${user.firstName} ${user.lastName}` : 'Dr. Sarah Johnson',
-            specialty: 'General Physician',
-            patient: patientInfo.name || 'Patient',
-            date: new Date().toLocaleDateString('en-US', {
-                month: 'short', day: 'numeric', year: 'numeric'
-            }),
-            ...prescription
-        };
-        downloadPrescriptionPDF(prescriptionData);
+        try {
+            const prescriptionData = {
+                id: `RX-${Date.now()}`,
+                appointmentId,
+                doctor: user?.firstName ? `Dr. ${user.firstName} ${user.lastName}` : 'Dr. Sarah Johnson',
+                specialty: 'General Physician',
+                patient: patientInfo.name || 'Patient',
+                date: new Date().toLocaleDateString('en-US', {
+                    month: 'short', day: 'numeric', year: 'numeric'
+                }),
+                ...prescription
+            };
+            downloadPrescriptionPDF(prescriptionData);
+        } catch (err) {
+            console.error('PDF generation error:', err);
+            alert('Failed to download PDF: ' + err.message);
+        }
     };
 
     const handleSave = async () => {

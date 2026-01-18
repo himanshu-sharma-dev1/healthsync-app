@@ -1,7 +1,7 @@
 // AI Services for HealthSync
 // Uses Groq API for fast, intelligent AI processing
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
 // Emergency keywords that should trigger alerts
 const EMERGENCY_KEYWORDS = [

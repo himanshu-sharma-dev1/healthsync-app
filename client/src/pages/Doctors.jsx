@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { doctorService } from '../services/api';
 import './Doctors.css';
@@ -14,14 +14,22 @@ const Doctors = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedSpecialty, setSelectedSpecialty] = useState('');
     const [specialties, setSpecialties] = useState([]);
+    const [recommendedSpecialty, setRecommendedSpecialty] = useState('');
     const { t } = useLanguage();
 
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
 
     useEffect(() => {
+        // Check for specialty from URL params (from patient intake recommendation)
+        const specialtyFromUrl = searchParams.get('specialty');
+        if (specialtyFromUrl) {
+            setSelectedSpecialty(specialtyFromUrl);
+            setRecommendedSpecialty(specialtyFromUrl);
+        }
         fetchDoctors();
         fetchSpecialties();
-    }, []);
+    }, [searchParams]);
 
     const fetchDoctors = async (params = {}) => {
         try {
@@ -63,6 +71,13 @@ const Doctors = () => {
 
     const handleBook = (doctorId) => {
         navigate(`/book/${doctorId}`);
+    };
+
+    const clearRecommendation = () => {
+        setRecommendedSpecialty('');
+        setSelectedSpecialty('');
+        // Clear URL params
+        navigate('/doctors', { replace: true });
     };
 
     // Demo data for hackathon presentation
@@ -141,11 +156,57 @@ const Doctors = () => {
         }
     ];
 
-    const displayDoctors = doctors.length > 0 ? doctors : demoData;
+    // Sort doctors: recommended specialty first, then by rating
+    const sortedDoctors = () => {
+        const baseList = doctors.length > 0 ? doctors : demoData;
+
+        if (recommendedSpecialty) {
+            // Filter by specialty if selected
+            const filtered = selectedSpecialty
+                ? baseList.filter(d => d.specialty === selectedSpecialty)
+                : baseList;
+
+            // Sort: matching specialty first, then by rating
+            return [...filtered].sort((a, b) => {
+                const aMatch = a.specialty === recommendedSpecialty ? 1 : 0;
+                const bMatch = b.specialty === recommendedSpecialty ? 1 : 0;
+                if (aMatch !== bMatch) return bMatch - aMatch;
+                return (b.rating || 0) - (a.rating || 0);
+            });
+        }
+
+        // If no recommendation, just filter by selected specialty
+        if (selectedSpecialty) {
+            return baseList.filter(d => d.specialty === selectedSpecialty);
+        }
+
+        return baseList;
+    };
+
+    const displayDoctors = sortedDoctors();
+    const matchingDoctorsCount = recommendedSpecialty
+        ? displayDoctors.filter(d => d.specialty === recommendedSpecialty).length
+        : 0;
 
     return (
         <div className="doctors-page">
             <div className="container">
+                {/* AI Recommendation Banner */}
+                {recommendedSpecialty && (
+                    <div className="recommendation-banner">
+                        <div className="recommendation-content">
+                            <span className="recommendation-icon">🤖</span>
+                            <div className="recommendation-text">
+                                <strong>AI Recommendation:</strong> Based on your symptoms, we recommend a <span className="highlight">{recommendedSpecialty}</span>
+                                <span className="match-count">({matchingDoctorsCount} {matchingDoctorsCount === 1 ? 'doctor' : 'doctors'} available)</span>
+                            </div>
+                            <button className="clear-recommendation" onClick={clearRecommendation} title="Clear filter">
+                                ✕
+                            </button>
+                        </div>
+                    </div>
+                )}
+
                 {/* Search Header */}
                 <div className="doctors-header">
                     <h1>{t('findDoctor')}</h1>
@@ -190,8 +251,11 @@ const Doctors = () => {
                 ) : (
                     <div className="doctors-grid">
                         {displayDoctors.map((doctor) => (
-                            <div key={doctor._id} className="doctor-card">
+                            <div key={doctor._id} className={`doctor-card ${recommendedSpecialty && doctor.specialty === recommendedSpecialty ? 'recommended' : ''}`}>
                                 <div className="doctor-card-header">
+                                    {recommendedSpecialty && doctor.specialty === recommendedSpecialty && (
+                                        <span className="recommended-tag">🤖 Recommended</span>
+                                    )}
                                     <div className="doctor-avatar doctor-avatar-img-wrap">
                                         <img
                                             src={doctor.firstName === 'Sarah' || doctor.firstName === 'Priya' || doctor.firstName === 'Aisha' ? doctorFemale : doctorMale}

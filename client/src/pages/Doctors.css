@@ -248,3 +248,111 @@
 .rating-stat .stat-label {
     font-size: 0.7rem !important;
 }
+
+/* AI Recommendation Banner */
+.recommendation-banner {
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
+    border: 1px solid rgba(14, 165, 233, 0.3);
+    border-radius: var(--radius-lg);
+    padding: var(--space-md) var(--space-lg);
+    margin-bottom: var(--space-xl);
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.recommendation-content {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.recommendation-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.recommendation-text {
+    flex: 1;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+}
+
+.recommendation-text .highlight {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.recommendation-text .match-count {
+    display: inline-block;
+    margin-left: var(--space-sm);
+    padding: 2px 8px;
+    background: rgba(14, 165, 233, 0.2);
+    border-radius: var(--radius-full);
+    font-size: 0.8rem;
+    color: var(--primary);
+}
+
+.clear-recommendation {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: var(--space-xs);
+    font-size: 1rem;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.clear-recommendation:hover {
+    background: rgba(239, 68, 68, 0.2);
+    color: var(--danger);
+}
+
+/* Recommended Doctor Tag */
+.doctor-card.recommended {
+    border-color: var(--primary);
+    box-shadow: 0 0 15px rgba(14, 165, 233, 0.2);
+}
+
+.recommended-tag {
+    position: absolute;
+    top: var(--space-md);
+    left: var(--space-md);
+    background: var(--gradient-primary);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: var(--radius-full);
+}
+
+@media (max-width: 768px) {
+    .recommendation-content {
+        flex-wrap: wrap;
+    }
+
+    .recommendation-text {
+        flex-basis: calc(100% - 50px);
+    }
+
+    .recommendation-text .match-count {
+        display: block;
+        margin: var(--space-xs) 0 0 0;
+    }
+}

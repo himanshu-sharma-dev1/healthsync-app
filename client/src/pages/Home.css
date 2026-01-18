@@ -175,8 +175,9 @@
 
 .card-header {
     display: flex;
-    align-items: center;
-    gap: var(--space-md);
+    flex-direction: row;
+    align-items: flex-start;
+    gap: var(--space-lg);
     margin-bottom: var(--space-lg);
 }
 
@@ -199,6 +200,47 @@
 .doctor-info p {
     font-size: 0.875rem;
     color: var(--text-muted);
+}
+
+/* Doctor Info Stacked Layout - for hero card */
+.doctor-info-stacked {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+}
+
+.doctor-info-stacked h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--text-primary);
+}
+
+.doctor-info-stacked p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.doctor-info-stacked .badge {
+    margin-top: 0.5rem;
+}
+
+/* Large Doctor Avatar for Hero Card */
+.doctor-avatar-img-large {
+    width: 200px;
+    height: 200px;
+    border-radius: var(--radius-xl);
+    object-fit: cover;
+    border: 3px solid var(--primary);
+    box-shadow: 0 8px 30px rgba(14, 165, 233, 0.3);
+    transition: all 0.3s ease;
+}
+
+.doctor-avatar-img-large:hover {
+    transform: scale(1.02);
+    box-shadow: 0 12px 40px rgba(14, 165, 233, 0.4);
 }
 
 /* Doctor Avatar Image - Premium Styling */
@@ -273,13 +315,17 @@
 
 .section-title {
     font-size: 2.25rem;
-    margin-bottom: var(--space-sm);
+    margin-bottom: var(--space-md);
+    display: block;
 }
 
 .section-subtitle {
     font-size: 1.125rem;
     max-width: 600px;
-    margin: 0 auto var(--space-2xl);
+    margin: 0 auto;
+    margin-top: var(--space-sm);
+    display: block;
+    color: var(--text-secondary);
 }
 
 .features-grid {
@@ -850,6 +896,10 @@
 .section-header {
     text-align: center;
     margin-bottom: var(--space-2xl);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
 }
 
 .section-badge {
@@ -861,7 +911,7 @@
     border-radius: 50px;
     font-size: 0.8rem;
     font-weight: 500;
-    margin-bottom: var(--space-md);
+    margin-bottom: var(--space-xs);
 }
 
 /* Glow Button */
@@ -941,9 +991,13 @@
     color: var(--text-muted);
 }
 
-/* Feature Highlight */
+/* Feature Highlight - Dark Mode */
 .feature-highlight {
     border-color: var(--primary);
+}
+
+[data-theme="dark"] .feature-highlight,
+:root:not([data-theme="light"]) .feature-highlight {
     background: linear-gradient(135deg, rgba(14, 165, 233, 0.05) 0%, rgba(30, 41, 59, 0.8) 100%);
 }
 

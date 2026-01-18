@@ -60,13 +60,13 @@ const Home = () => {
                                 <img
                                     src={doctorFemale}
                                     alt="Dr. Sarah Johnson"
-                                    className="doctor-avatar-img"
+                                    className="doctor-avatar-img-large"
                                 />
-                                <div className="doctor-info">
+                                <div className="doctor-info-stacked">
                                     <h4>Dr. Sarah Johnson</h4>
                                     <p>Cardiologist</p>
+                                    <span className="badge badge-success">Online</span>
                                 </div>
-                                <span className="badge badge-success">Online</span>
                             </div>
                             <div className="card-body">
                                 <p>Ready for your consultation?</p>

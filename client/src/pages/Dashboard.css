@@ -624,3 +624,67 @@
         flex-direction: column;
     }
 }
+
+/* ========== LIGHT MODE DASHBOARD ========== */
+[data-theme="light"] .stat-card,
+[data-theme="light"] .stat-card-vertical {
+    background: #ffffff !important;
+    border-color: rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .stats-centered .stat-card-vertical {
+    background: #ffffff !important;
+}
+
+[data-theme="light"] .dashboard-section {
+    background: #ffffff;
+    border-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .appointment-card {
+    background: #f8fafc;
+}
+
+[data-theme="light"] .appointment-card:hover {
+    background: #f1f5f9;
+}
+
+[data-theme="light"] .action-card {
+    background: #ffffff;
+    border-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .action-card:hover {
+    background: #f8fafc;
+    border-color: var(--primary);
+}
+
+[data-theme="light"] .profile-item {
+    background: #f8fafc;
+}
+
+[data-theme="light"] .prescription-item {
+    background: #f8fafc;
+}
+
+[data-theme="light"] .sort-controls {
+    background: #f1f5f9;
+}
+
+[data-theme="light"] .sort-select {
+    background: #ffffff;
+    border-color: rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="light"] .tab-btn:hover {
+    background: #f1f5f9;
+}
+
+[data-theme="light"] .stat-icon-top {
+    background: rgba(14, 165, 233, 0.1);
+}
+
+[data-theme="light"] .doctor-avatar-sm {
+    background: #f1f5f9;
+}

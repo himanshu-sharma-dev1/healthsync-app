@@ -6,6 +6,19 @@
     overflow: hidden;
 }
 
+.video-main-content {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.video-main-content>.video-container {
+    flex: 1;
+    min-width: 0;
+}
+
 /* Emergency Alert Banner */
 .emergency-alert {
     display: flex;
@@ -1028,4 +1041,68 @@
     font-size: 0.65rem;
     color: var(--text-muted);
     margin-top: 2px;
+}
+
+/* ========== LIGHT MODE VIDEO CALL ========== */
+[data-theme="light"] .video-call-page {
+    background: #f8fafc;
+}
+
+[data-theme="light"] .video-frame {
+    background: #e2e8f0;
+}
+
+[data-theme="light"] .demo-video {
+    background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%);
+}
+
+[data-theme="light"] .call-info {
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .video-controls {
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .control-btn {
+    background: #f8fafc;
+    border-color: rgba(0, 0, 0, 0.1);
+    color: #334155;
+}
+
+[data-theme="light"] .control-btn:hover {
+    background: #f1f5f9;
+    border-color: var(--primary);
+}
+
+[data-theme="light"] .chat-sidebar,
+[data-theme="light"] .transcription-panel {
+    background: #ffffff;
+    border-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .chat-header,
+[data-theme="light"] .transcription-header {
+    border-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .chat-message {
+    background: #f1f5f9;
+}
+
+[data-theme="light"] .chat-input input {
+    background: #f8fafc;
+    border-color: rgba(0, 0, 0, 0.1);
+    color: #0f172a;
+}
+
+[data-theme="light"] .transcript-entry {
+    background: #f8fafc;
+}
+
+[data-theme="light"] .local-video-demo {
+    background: #f1f5f9;
+    border-color: rgba(0, 0, 0, 0.1);
 }

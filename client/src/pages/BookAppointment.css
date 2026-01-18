@@ -263,3 +263,68 @@
         grid-template-columns: repeat(3, 1fr);
     }
 }
+
+/* ========== LIGHT MODE BOOK APPOINTMENT ========== */
+[data-theme="light"] .doctor-info-card,
+[data-theme="light"] .booking-form {
+    background: #ffffff;
+    border-color: rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .date-card {
+    background: #f8fafc;
+    border-color: rgba(0, 0, 0, 0.1);
+    color: #334155;
+}
+
+[data-theme="light"] .date-card:hover {
+    border-color: var(--primary);
+}
+
+[data-theme="light"] .date-card.selected {
+    background: rgba(14, 165, 233, 0.1);
+    border-color: var(--primary);
+}
+
+[data-theme="light"] .date-card .day {
+    color: #64748b;
+}
+
+[data-theme="light"] .date-card .day-num {
+    color: #0f172a;
+}
+
+[data-theme="light"] .date-card .month {
+    color: #64748b;
+}
+
+[data-theme="light"] .time-slot {
+    background: #f8fafc;
+    border-color: rgba(0, 0, 0, 0.1);
+    color: #334155;
+}
+
+[data-theme="light"] .time-slot:hover {
+    border-color: var(--primary);
+    background: #f1f5f9;
+}
+
+[data-theme="light"] .time-slot.selected {
+    background: var(--primary);
+    color: white;
+}
+
+[data-theme="light"] .booking-summary {
+    background: #f8fafc;
+}
+
+[data-theme="light"] .no-slots {
+    background: #f8fafc;
+    color: #64748b;
+}
+
+[data-theme="light"] .auth-required {
+    background: #ffffff;
+    border-color: rgba(0, 0, 0, 0.08);
+}

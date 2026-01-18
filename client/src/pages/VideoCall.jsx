@@ -584,395 +584,398 @@ const VideoCall = () => {
                 </div>
             )}
 
-            {/* Main Video Area */}
-            <div className="video-container">
-                {/* Video Frame */}
-                <div className="video-frame" ref={videoContainerRef}>
-                    {isLoading && (
-                        <div className="connecting-overlay">
-                            <div className="spinner"></div>
-                            <p>Connecting to your consultation...</p>
-                        </div>
-                    )}
-
-                    {error && (
-                        <div className="error-notice">
-                            <p>⚠️ {error}</p>
-                        </div>
-                    )}
-
-                    {!isLoading && isConnected && !callFrame && (
-                        <div className="demo-video">
-                            <div className="remote-video-demo">
-                                <div className="placeholder-avatar large">👨‍⚕️</div>
-                                <p>{(() => { const d = sessionStorage.getItem('appointmentDoctor'); return d ? JSON.parse(d).name : 'Dr. Sarah Johnson'; })()}</p>
-                                <span className="badge badge-success">Connected</span>
+            {/* Main Content Area - Video + Sidebars */}
+            <div className="video-main-content">
+                {/* Main Video Area */}
+                <div className="video-container">
+                    {/* Video Frame */}
+                    <div className="video-frame" ref={videoContainerRef}>
+                        {isLoading && (
+                            <div className="connecting-overlay">
+                                <div className="spinner"></div>
+                                <p>Connecting to your consultation...</p>
                             </div>
-                            <div className="local-video-demo">
-                                {localStream && !isVideoOff ? (
-                                    <video
-                                        ref={localVideoRef}
-                                        autoPlay
-                                        muted
-                                        playsInline
-                                        style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '12px', transform: 'scaleX(-1)' }}
-                                    />
-                                ) : (
-                                    <div className="placeholder-avatar small">
-                                        <span>{user?.firstName?.[0] || 'Y'}</span>
-                                    </div>
-                                )}
-                                {isMuted && <div className="muted-indicator">🔇</div>}
-                            </div>
-                        </div>
-                    )}
-                </div>
-
-                {/* Call Info */}
-                <div className="call-info">
-                    <div className="call-status-container">
-                        <span className={`status-dot ${isConnected ? 'connected' : 'connecting'}`}></span>
-                        <span className="call-status">
-                            {isConnected ? 'Connected' : 'Connecting...'}
-                        </span>
-                    </div>
-                    <span className="call-duration">{formatDuration(callDuration)}</span>
-
-                    {/* Network Quality Indicator */}
-                    <div className={`network-quality ${networkQuality}`} title={`Network: ${networkQuality}`}>
-                        <span className="quality-bars">
-                            <span className="bar"></span>
-                            <span className="bar"></span>
-                            <span className="bar"></span>
-                        </span>
-                        <span className="quality-label">{networkQuality}</span>
-                    </div>
-                </div>
-
-                {/* Controls */}
-                <div className="video-controls">
-                    <button
-                        className={`control-btn ${isMuted ? 'active' : ''}`}
-                        onClick={toggleMute}
-                        title={isMuted ? 'Unmute' : 'Mute'}
-                    >
-                        <span className="control-icon">{isMuted ? '🔇' : '🎤'}</span>
-                        <span className="control-label">{isMuted ? 'Unmute' : 'Mute'}</span>
-                    </button>
-
-                    <button
-                        className={`control-btn ${isVideoOff ? 'active' : ''}`}
-                        onClick={toggleVideo}
-                        title={isVideoOff ? 'Turn on camera' : 'Turn off camera'}
-                    >
-                        <span className="control-icon">{isVideoOff ? '📵' : '📹'}</span>
-                        <span className="control-label">{isVideoOff ? 'Start Video' : 'Stop Video'}</span>
-                    </button>
-
-                    <button
-                        className={`control-btn ${showChat ? 'active' : ''}`}
-                        onClick={() => setShowChat(!showChat)}
-                        title="Toggle chat"
-                    >
-                        <span className="control-icon">💬</span>
-                        <span className="control-label">Chat</span>
-                        {messages.length > 0 && (
-                            <span className="message-badge">{messages.length}</span>
                         )}
-                    </button>
 
-                    <button
-                        className={`control-btn ${showTranscription ? 'active' : ''}`}
-                        onClick={async () => {
-                            const nextState = !showTranscription;
-                            setShowTranscription(nextState);
-
-                            if (nextState) {
-                                // Start real-time transcription with audio capture
-                                try {
-                                    if (transcriptionWsRef.current) {
-                                        // Request microphone access
-                                        const stream = await navigator.mediaDevices.getUserMedia({
-                                            audio: {
-                                                echoCancellation: true,
-                                                noiseSuppression: true,
-                                                sampleRate: 16000
-                                            }
-                                        });
-                                        audioStreamRef.current = stream;
-
-                                        // Emit start-stream to backend to initialize DeepGram
-                                        transcriptionWsRef.current.emit('start-stream');
-
-                                        // Use Web Audio API for raw PCM audio (DeepGram compatible)
-                                        const audioContext = new (window.AudioContext || window.webkitAudioContext)({
-                                            sampleRate: 16000
-                                        });
-                                        const source = audioContext.createMediaStreamSource(stream);
-
-                                        // ScriptProcessorNode for audio processing (deprecated but widely supported)
-                                        const processor = audioContext.createScriptProcessor(4096, 1, 1);
-
-                                        processor.onaudioprocess = (e) => {
-                                            const inputData = e.inputBuffer.getChannelData(0);
-                                            // Convert float32 to int16 (linear16 for DeepGram)
-                                            const int16Data = new Int16Array(inputData.length);
-                                            for (let i = 0; i < inputData.length; i++) {
-                                                int16Data[i] = Math.max(-32768, Math.min(32767, Math.floor(inputData[i] * 32768)));
-                                            }
-                                            if (transcriptionWsRef.current) {
-                                                transcriptionWsRef.current.emit('audio-data', int16Data.buffer);
-                                            }
-                                        };
-
-                                        source.connect(processor);
-                                        processor.connect(audioContext.destination);
-
-                                        // Store refs for cleanup
-                                        mediaRecorderRef.current = { processor, audioContext, source };
-
-                                        setIsTranscribing(true);
-                                        console.log('🎙️ Live transcription started (PCM audio)');
-                                    }
-                                } catch (err) {
-                                    console.error('Failed to start transcription:', err);
-                                    setShowTranscription(false);
-                                }
-                            } else {
-                                // Stop transcription
-                                // Stop Web Audio API processing
-                                if (mediaRecorderRef.current?.processor) {
-                                    mediaRecorderRef.current.processor.disconnect();
-                                    mediaRecorderRef.current.source.disconnect();
-                                    mediaRecorderRef.current.audioContext.close();
-                                }
-                                if (audioStreamRef.current) {
-                                    audioStreamRef.current.getTracks().forEach(track => track.stop());
-                                }
-                                if (transcriptionWsRef.current) {
-                                    transcriptionWsRef.current.emit('stop-stream');
-                                }
-                                setIsTranscribing(false);
-                                console.log('🎙️ Live transcription stopped');
-                            }
-                        }}
-                        title="Toggle transcription"
-                    >
-                        <span className="control-icon">📝</span>
-                        <span className="control-label">Transcript</span>
-                        {isTranscribing && (
-                            <span className="recording-indicator"></span>
-                        )}
-                    </button>
-
-                    {/* Share Link Button - Only show for room creator (patient) */}
-                    {shareableLink && !isJoiningExistingRoom && (
-                        <button
-                            className={`control-btn ${linkCopied ? 'active' : ''}`}
-                            onClick={() => {
-                                navigator.clipboard.writeText(shareableLink);
-                                setLinkCopied(true);
-                                setTimeout(() => setLinkCopied(false), 3000);
-                            }}
-                            title="Copy link for doctor to join"
-                        >
-                            <span className="control-icon">{linkCopied ? '✅' : '🔗'}</span>
-                            <span className="control-label">{linkCopied ? 'Copied!' : 'Share Link'}</span>
-                        </button>
-                    )}
-
-                    <button
-                        className="control-btn end-call"
-                        onClick={handleEndCall}
-                        title="End call"
-                    >
-                        <span className="control-icon">📞</span>
-                        <span className="control-label">End Call</span>
-                    </button>
-
-                    {/* Write Prescription Button - For doctors after/during call */}
-                    <button
-                        className="control-btn prescription-btn"
-                        onClick={() => navigate(`/doctor-prescription/${appointmentId || roomName || 'new'}`)}
-                        title="Write prescription for patient"
-                    >
-                        <span className="control-icon">📋</span>
-                        <span className="control-label">Prescription</span>
-                    </button>
-                </div>
-            </div>
-
-            {/* Chat Sidebar */}
-            <div className={`chat-sidebar ${showChat ? 'open' : ''}`}>
-                <div className="chat-header">
-                    <h3>💬 In-Call Chat</h3>
-                    <button className="close-chat" onClick={() => setShowChat(false)}>✕</button>
-                </div>
-
-                <div className="chat-messages">
-                    {messages.length === 0 ? (
-                        <div className="no-messages">
-                            <span>💬</span>
-                            <p>No messages yet</p>
-                            <small>Messages are private to this consultation</small>
-                        </div>
-                    ) : (
-                        messages.map((msg, idx) => (
-                            <div
-                                key={idx}
-                                className={`chat-message ${msg.sender === (user?.firstName || 'You') ? 'own' : ''}`}
-                            >
-                                <span className="message-sender">{msg.sender}</span>
-                                <p className="message-text">{msg.message}</p>
-                                <span className="message-time">
-                                    {new Date(msg.timestamp).toLocaleTimeString([], {
-                                        hour: '2-digit',
-                                        minute: '2-digit'
-                                    })}
-                                </span>
+                        {error && (
+                            <div className="error-notice">
+                                <p>⚠️ {error}</p>
                             </div>
-                        ))
-                    )}
-                    <div ref={chatEndRef} />
-                </div>
+                        )}
 
-                <form className="chat-input" onSubmit={handleSendMessage}>
-                    <input
-                        type="text"
-                        placeholder="Type a message..."
-                        value={newMessage}
-                        onChange={(e) => setNewMessage(e.target.value)}
-                    />
-                    <button type="submit" disabled={!newMessage.trim()}>
-                        Send
-                    </button>
-                </form>
-            </div>
+                        {!isLoading && isConnected && !callFrame && (
+                            <div className="demo-video">
+                                <div className="remote-video-demo">
+                                    <div className="placeholder-avatar large">👨‍⚕️</div>
+                                    <p>{(() => { const d = sessionStorage.getItem('appointmentDoctor'); return d ? JSON.parse(d).name : 'Dr. Sarah Johnson'; })()}</p>
+                                    <span className="badge badge-success">Connected</span>
+                                </div>
+                                <div className="local-video-demo">
+                                    {localStream && !isVideoOff ? (
+                                        <video
+                                            ref={localVideoRef}
+                                            autoPlay
+                                            muted
+                                            playsInline
+                                            style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '12px', transform: 'scaleX(-1)' }}
+                                        />
+                                    ) : (
+                                        <div className="placeholder-avatar small">
+                                            <span>{user?.firstName?.[0] || 'Y'}</span>
+                                        </div>
+                                    )}
+                                    {isMuted && <div className="muted-indicator">🔇</div>}
+                                </div>
+                            </div>
+                        )}
+                    </div>
 
-            {/* Transcription Panel */}
-            <div className={`transcription-panel ${showTranscription ? 'open' : ''}`}>
-                <div className="transcription-header">
-                    <div className="header-left">
-                        <h3>🎙️ Live Transcription</h3>
-                        {isTranscribing && (
-                            <span className="live-badge">
-                                <span className="pulse-dot"></span>
-                                LIVE
+                    {/* Call Info */}
+                    <div className="call-info">
+                        <div className="call-status-container">
+                            <span className={`status-dot ${isConnected ? 'connected' : 'connecting'}`}></span>
+                            <span className="call-status">
+                                {isConnected ? 'Connected' : 'Connecting...'}
                             </span>
-                        )}
+                        </div>
+                        <span className="call-duration">{formatDuration(callDuration)}</span>
+
+                        {/* Network Quality Indicator */}
+                        <div className={`network-quality ${networkQuality}`} title={`Network: ${networkQuality}`}>
+                            <span className="quality-bars">
+                                <span className="bar"></span>
+                                <span className="bar"></span>
+                                <span className="bar"></span>
+                            </span>
+                            <span className="quality-label">{networkQuality}</span>
+                        </div>
                     </div>
-                    <div className="header-actions">
-                        {language !== 'en' && (
-                            <button
-                                className={`translate-toggle ${isTranslationEnabled ? 'active' : ''}`}
-                                onClick={async () => {
-                                    setIsTranslationEnabled(!isTranslationEnabled);
-                                    if (!isTranslationEnabled && transcription.length > 0) {
-                                        setIsTranslating(true);
-                                        const translations = {};
-                                        for (const entry of transcription) {
-                                            const key = `${entry.speaker}-${entry.time}`;
-                                            try {
-                                                translations[key] = await translateText(entry.text, 'en', language);
-                                            } catch (e) {
-                                                translations[key] = entry.text;
-                                            }
+
+                    {/* Controls */}
+                    <div className="video-controls">
+                        <button
+                            className={`control-btn ${isMuted ? 'active' : ''}`}
+                            onClick={toggleMute}
+                            title={isMuted ? 'Unmute' : 'Mute'}
+                        >
+                            <span className="control-icon">{isMuted ? '🔇' : '🎤'}</span>
+                            <span className="control-label">{isMuted ? 'Unmute' : 'Mute'}</span>
+                        </button>
+
+                        <button
+                            className={`control-btn ${isVideoOff ? 'active' : ''}`}
+                            onClick={toggleVideo}
+                            title={isVideoOff ? 'Turn on camera' : 'Turn off camera'}
+                        >
+                            <span className="control-icon">{isVideoOff ? '📵' : '📹'}</span>
+                            <span className="control-label">{isVideoOff ? 'Start Video' : 'Stop Video'}</span>
+                        </button>
+
+                        <button
+                            className={`control-btn ${showChat ? 'active' : ''}`}
+                            onClick={() => setShowChat(!showChat)}
+                            title="Toggle chat"
+                        >
+                            <span className="control-icon">💬</span>
+                            <span className="control-label">Chat</span>
+                            {messages.length > 0 && (
+                                <span className="message-badge">{messages.length}</span>
+                            )}
+                        </button>
+
+                        <button
+                            className={`control-btn ${showTranscription ? 'active' : ''}`}
+                            onClick={async () => {
+                                const nextState = !showTranscription;
+                                setShowTranscription(nextState);
+
+                                if (nextState) {
+                                    // Start real-time transcription with audio capture
+                                    try {
+                                        if (transcriptionWsRef.current) {
+                                            // Request microphone access
+                                            const stream = await navigator.mediaDevices.getUserMedia({
+                                                audio: {
+                                                    echoCancellation: true,
+                                                    noiseSuppression: true,
+                                                    sampleRate: 16000
+                                                }
+                                            });
+                                            audioStreamRef.current = stream;
+
+                                            // Emit start-stream to backend to initialize DeepGram
+                                            transcriptionWsRef.current.emit('start-stream');
+
+                                            // Use Web Audio API for raw PCM audio (DeepGram compatible)
+                                            const audioContext = new (window.AudioContext || window.webkitAudioContext)({
+                                                sampleRate: 16000
+                                            });
+                                            const source = audioContext.createMediaStreamSource(stream);
+
+                                            // ScriptProcessorNode for audio processing (deprecated but widely supported)
+                                            const processor = audioContext.createScriptProcessor(4096, 1, 1);
+
+                                            processor.onaudioprocess = (e) => {
+                                                const inputData = e.inputBuffer.getChannelData(0);
+                                                // Convert float32 to int16 (linear16 for DeepGram)
+                                                const int16Data = new Int16Array(inputData.length);
+                                                for (let i = 0; i < inputData.length; i++) {
+                                                    int16Data[i] = Math.max(-32768, Math.min(32767, Math.floor(inputData[i] * 32768)));
+                                                }
+                                                if (transcriptionWsRef.current) {
+                                                    transcriptionWsRef.current.emit('audio-data', int16Data.buffer);
+                                                }
+                                            };
+
+                                            source.connect(processor);
+                                            processor.connect(audioContext.destination);
+
+                                            // Store refs for cleanup
+                                            mediaRecorderRef.current = { processor, audioContext, source };
+
+                                            setIsTranscribing(true);
+                                            console.log('🎙️ Live transcription started (PCM audio)');
                                         }
-                                        setTranslatedTexts(translations);
-                                        setIsTranslating(false);
+                                    } catch (err) {
+                                        console.error('Failed to start transcription:', err);
+                                        setShowTranscription(false);
                                     }
+                                } else {
+                                    // Stop transcription
+                                    // Stop Web Audio API processing
+                                    if (mediaRecorderRef.current?.processor) {
+                                        mediaRecorderRef.current.processor.disconnect();
+                                        mediaRecorderRef.current.source.disconnect();
+                                        mediaRecorderRef.current.audioContext.close();
+                                    }
+                                    if (audioStreamRef.current) {
+                                        audioStreamRef.current.getTracks().forEach(track => track.stop());
+                                    }
+                                    if (transcriptionWsRef.current) {
+                                        transcriptionWsRef.current.emit('stop-stream');
+                                    }
+                                    setIsTranscribing(false);
+                                    console.log('🎙️ Live transcription stopped');
+                                }
+                            }}
+                            title="Toggle transcription"
+                        >
+                            <span className="control-icon">📝</span>
+                            <span className="control-label">Transcript</span>
+                            {isTranscribing && (
+                                <span className="recording-indicator"></span>
+                            )}
+                        </button>
+
+                        {/* Share Link Button - Only show for room creator (patient) */}
+                        {shareableLink && !isJoiningExistingRoom && (
+                            <button
+                                className={`control-btn ${linkCopied ? 'active' : ''}`}
+                                onClick={() => {
+                                    navigator.clipboard.writeText(shareableLink);
+                                    setLinkCopied(true);
+                                    setTimeout(() => setLinkCopied(false), 3000);
                                 }}
-                                title={isTranslationEnabled ? 'Show Original' : 'Translate to Hindi'}
+                                title="Copy link for doctor to join"
                             >
-                                {isTranslating ? '⏳' : '🌐'} {isTranslationEnabled ? 'Original' : 'Translate'}
+                                <span className="control-icon">{linkCopied ? '✅' : '🔗'}</span>
+                                <span className="control-label">{linkCopied ? 'Copied!' : 'Share Link'}</span>
                             </button>
                         )}
-                        <button className="close-transcription" onClick={() => setShowTranscription(false)}>✕</button>
+
+                        <button
+                            className="control-btn end-call"
+                            onClick={handleEndCall}
+                            title="End call"
+                        >
+                            <span className="control-icon">📞</span>
+                            <span className="control-label">End Call</span>
+                        </button>
+
+                        {/* Write Prescription Button - For doctors after/during call */}
+                        <button
+                            className="control-btn prescription-btn"
+                            onClick={() => navigate(`/doctor-prescription/${appointmentId || roomName || 'new'}`)}
+                            title="Write prescription for patient"
+                        >
+                            <span className="control-icon">📋</span>
+                            <span className="control-label">Prescription</span>
+                        </button>
                     </div>
                 </div>
 
-                {/* Color Legend */}
-                <div className="term-legend">
-                    <span className="legend-item symptom">Symptoms</span>
-                    <span className="legend-item medication">Medications</span>
-                    <span className="legend-item dosage">Dosages</span>
-                    <span className="legend-item critical">Critical</span>
-                </div>
+                {/* Chat Sidebar */}
+                <div className={`chat-sidebar ${showChat ? 'open' : ''}`}>
+                    <div className="chat-header">
+                        <h3>💬 In-Call Chat</h3>
+                        <button className="close-chat" onClick={() => setShowChat(false)}>✕</button>
+                    </div>
 
-                <div className="transcription-content">
-                    {transcription.length === 0 ? (
-                        <div className="no-transcription">
-                            <span>🎙️</span>
-                            <p>Transcription will appear here</p>
-                            <small>Powered by DeepGram AI (nova-2-medical)</small>
-                        </div>
-                    ) : (
-                        transcription.map((entry, idx) => {
-                            const entryKey = `${entry.speaker}-${entry.time}`;
-                            const translatedText = translatedTexts[entryKey];
-
-                            return (
-                                <div key={idx} className={`transcript-entry ${entry.speaker.toLowerCase()}`}>
-                                    <div className="entry-header">
-                                        <span className="speaker">{entry.speaker}</span>
-                                        <span className="timestamp">{entry.time}</span>
-                                    </div>
-                                    <p className="entry-text">
-                                        {highlightMedicalTerms(entry.text).map(word => (
-                                            word.type ? (
-                                                <span key={word.key} className={`highlight-${word.type}`}>
-                                                    {word.text}
-                                                </span>
-                                            ) : (
-                                                <span key={word.key}>{word.text}</span>
-                                            )
-                                        ))}
-                                    </p>
-                                    {isTranslationEnabled && translatedText && (
-                                        <p className="entry-text translated">
-                                            🌐 {translatedText}
-                                        </p>
-                                    )}
-                                </div>
-                            );
-                        })
-                    )}
-                    <div ref={transcriptionEndRef} />
-                </div>
-
-                {/* Transcript Summary - Dynamically detect medical terms */}
-                {transcription.length > 0 && (() => {
-                    const allText = transcription.map(t => t.text).join(' ').toLowerCase();
-                    const detectedTerms = {
-                        symptoms: MEDICAL_TERMS.symptoms.filter(term => allText.includes(term.toLowerCase())),
-                        medications: MEDICAL_TERMS.medications.filter(term => allText.includes(term.toLowerCase())),
-                        dosages: MEDICAL_TERMS.dosages.filter(term => allText.includes(term.toLowerCase())),
-                        critical: MEDICAL_TERMS.critical.filter(term => allText.includes(term.toLowerCase()))
-                    };
-                    const hasTerms = Object.values(detectedTerms).some(arr => arr.length > 0);
-
-                    return hasTerms ? (
-                        <div className="transcript-summary">
-                            <h4>🔍 Key Medical Terms Detected</h4>
-                            <div className="summary-tags">
-                                {detectedTerms.symptoms.map(term => (
-                                    <span key={term} className="tag symptom">{term}</span>
-                                ))}
-                                {detectedTerms.medications.map(term => (
-                                    <span key={term} className="tag medication">{term}</span>
-                                ))}
-                                {detectedTerms.dosages.map(term => (
-                                    <span key={term} className="tag dosage">{term}</span>
-                                ))}
-                                {detectedTerms.critical.map(term => (
-                                    <span key={term} className="tag critical">{term}</span>
-                                ))}
+                    <div className="chat-messages">
+                        {messages.length === 0 ? (
+                            <div className="no-messages">
+                                <span>💬</span>
+                                <p>No messages yet</p>
+                                <small>Messages are private to this consultation</small>
                             </div>
+                        ) : (
+                            messages.map((msg, idx) => (
+                                <div
+                                    key={idx}
+                                    className={`chat-message ${msg.sender === (user?.firstName || 'You') ? 'own' : ''}`}
+                                >
+                                    <span className="message-sender">{msg.sender}</span>
+                                    <p className="message-text">{msg.message}</p>
+                                    <span className="message-time">
+                                        {new Date(msg.timestamp).toLocaleTimeString([], {
+                                            hour: '2-digit',
+                                            minute: '2-digit'
+                                        })}
+                                    </span>
+                                </div>
+                            ))
+                        )}
+                        <div ref={chatEndRef} />
+                    </div>
+
+                    <form className="chat-input" onSubmit={handleSendMessage}>
+                        <input
+                            type="text"
+                            placeholder="Type a message..."
+                            value={newMessage}
+                            onChange={(e) => setNewMessage(e.target.value)}
+                        />
+                        <button type="submit" disabled={!newMessage.trim()}>
+                            Send
+                        </button>
+                    </form>
+                </div>
+
+                {/* Transcription Panel */}
+                <div className={`transcription-panel ${showTranscription ? 'open' : ''}`}>
+                    <div className="transcription-header">
+                        <div className="header-left">
+                            <h3>🎙️ Live Transcription</h3>
+                            {isTranscribing && (
+                                <span className="live-badge">
+                                    <span className="pulse-dot"></span>
+                                    LIVE
+                                </span>
+                            )}
                         </div>
-                    ) : null;
-                })()}
+                        <div className="header-actions">
+                            {language !== 'en' && (
+                                <button
+                                    className={`translate-toggle ${isTranslationEnabled ? 'active' : ''}`}
+                                    onClick={async () => {
+                                        setIsTranslationEnabled(!isTranslationEnabled);
+                                        if (!isTranslationEnabled && transcription.length > 0) {
+                                            setIsTranslating(true);
+                                            const translations = {};
+                                            for (const entry of transcription) {
+                                                const key = `${entry.speaker}-${entry.time}`;
+                                                try {
+                                                    translations[key] = await translateText(entry.text, 'en', language);
+                                                } catch (e) {
+                                                    translations[key] = entry.text;
+                                                }
+                                            }
+                                            setTranslatedTexts(translations);
+                                            setIsTranslating(false);
+                                        }
+                                    }}
+                                    title={isTranslationEnabled ? 'Show Original' : 'Translate to Hindi'}
+                                >
+                                    {isTranslating ? '⏳' : '🌐'} {isTranslationEnabled ? 'Original' : 'Translate'}
+                                </button>
+                            )}
+                            <button className="close-transcription" onClick={() => setShowTranscription(false)}>✕</button>
+                        </div>
+                    </div>
+
+                    {/* Color Legend */}
+                    <div className="term-legend">
+                        <span className="legend-item symptom">Symptoms</span>
+                        <span className="legend-item medication">Medications</span>
+                        <span className="legend-item dosage">Dosages</span>
+                        <span className="legend-item critical">Critical</span>
+                    </div>
+
+                    <div className="transcription-content">
+                        {transcription.length === 0 ? (
+                            <div className="no-transcription">
+                                <span>🎙️</span>
+                                <p>Transcription will appear here</p>
+                                <small>Powered by DeepGram AI (nova-2-medical)</small>
+                            </div>
+                        ) : (
+                            transcription.map((entry, idx) => {
+                                const entryKey = `${entry.speaker}-${entry.time}`;
+                                const translatedText = translatedTexts[entryKey];
+
+                                return (
+                                    <div key={idx} className={`transcript-entry ${entry.speaker.toLowerCase()}`}>
+                                        <div className="entry-header">
+                                            <span className="speaker">{entry.speaker}</span>
+                                            <span className="timestamp">{entry.time}</span>
+                                        </div>
+                                        <p className="entry-text">
+                                            {highlightMedicalTerms(entry.text).map(word => (
+                                                word.type ? (
+                                                    <span key={word.key} className={`highlight-${word.type}`}>
+                                                        {word.text}
+                                                    </span>
+                                                ) : (
+                                                    <span key={word.key}>{word.text}</span>
+                                                )
+                                            ))}
+                                        </p>
+                                        {isTranslationEnabled && translatedText && (
+                                            <p className="entry-text translated">
+                                                🌐 {translatedText}
+                                            </p>
+                                        )}
+                                    </div>
+                                );
+                            })
+                        )}
+                        <div ref={transcriptionEndRef} />
+                    </div>
+
+                    {/* Transcript Summary - Dynamically detect medical terms */}
+                    {transcription.length > 0 && (() => {
+                        const allText = transcription.map(t => t.text).join(' ').toLowerCase();
+                        const detectedTerms = {
+                            symptoms: MEDICAL_TERMS.symptoms.filter(term => allText.includes(term.toLowerCase())),
+                            medications: MEDICAL_TERMS.medications.filter(term => allText.includes(term.toLowerCase())),
+                            dosages: MEDICAL_TERMS.dosages.filter(term => allText.includes(term.toLowerCase())),
+                            critical: MEDICAL_TERMS.critical.filter(term => allText.includes(term.toLowerCase()))
+                        };
+                        const hasTerms = Object.values(detectedTerms).some(arr => arr.length > 0);
+
+                        return hasTerms ? (
+                            <div className="transcript-summary">
+                                <h4>🔍 Key Medical Terms Detected</h4>
+                                <div className="summary-tags">
+                                    {detectedTerms.symptoms.map(term => (
+                                        <span key={term} className="tag symptom">{term}</span>
+                                    ))}
+                                    {detectedTerms.medications.map(term => (
+                                        <span key={term} className="tag medication">{term}</span>
+                                    ))}
+                                    {detectedTerms.dosages.map(term => (
+                                        <span key={term} className="tag dosage">{term}</span>
+                                    ))}
+                                    {detectedTerms.critical.map(term => (
+                                        <span key={term} className="tag critical">{term}</span>
+                                    ))}
+                                </div>
+                            </div>
+                        ) : null;
+                    })()}
+                </div>
             </div>
-        </div >
+        </div>
     );
 };
 

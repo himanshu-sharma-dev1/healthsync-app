@@ -482,3 +482,67 @@
         justify-content: center;
     }
 }
+
+/* ========== LIGHT MODE PATIENT INTAKE ========== */
+[data-theme="light"] .form-step {
+    background: #ffffff;
+    border-color: rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .symptom-chip {
+    background: #f8fafc;
+    border-color: rgba(0, 0, 0, 0.1);
+    color: #334155;
+}
+
+[data-theme="light"] .symptom-chip:hover {
+    background: #f1f5f9;
+    border-color: var(--primary);
+    color: #0f172a;
+}
+
+[data-theme="light"] .symptom-chip.selected {
+    background: var(--primary);
+    color: white;
+}
+
+[data-theme="light"] .specialty-card {
+    background: #f8fafc;
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .specialty-card:hover {
+    border-color: rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="light"] .specialty-card.selected {
+    background: rgba(14, 165, 233, 0.08);
+    border-color: var(--primary);
+}
+
+[data-theme="light"] .urgency-option {
+    background: #f8fafc;
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .urgency-option:hover,
+[data-theme="light"] .urgency-option.selected {
+    border-color: var(--primary);
+}
+
+[data-theme="light"] .step-num {
+    background: #e2e8f0;
+    color: #475569;
+}
+
+[data-theme="light"] .auth-required {
+    background: #ffffff;
+    border-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .alt-badge {
+    background: #f1f5f9;
+    border-color: rgba(0, 0, 0, 0.1);
+    color: #475569;
+}
